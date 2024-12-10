@@ -15,13 +15,6 @@ const NavIcons = () => {
 
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
-  useEffect(() => {
-    getUserInfo();
-  }, []);
-
-  const getUserInfo = () => {
-   
-  };
 
   const router = useRouter();
 

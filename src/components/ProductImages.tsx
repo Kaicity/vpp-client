@@ -1,55 +1,38 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { useState } from "react";
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
-const images = [
-  {
-    id: 1,
-    url: "https://images.pexels.com/photos/7594641/pexels-photo-7594641.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load",
-  },
-  {
-    id: 2,
-    url: "https://images.pexels.com/photos/7594642/pexels-photo-7594642.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load",
-  },
-  {
-    id: 3,
-    url: "https://images.pexels.com/photos/6368831/pexels-photo-6368831.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load",
-  },
-  {
-    id: 4,
-    url: "https://images.pexels.com/photos/7657377/pexels-photo-7657377.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load",
-  },
-];
+interface ProductImageProps {
+  imageUrl1: string;
+  imageUrl2: string;
+  imageUrl3: string;
+  imageUrl4: string;
+}
 
-const ProductImages = () => {
+const ProductImages: React.FC<ProductImageProps> = ({ imageUrl1, imageUrl2, imageUrl3, imageUrl4 }) => {
   const [index, setIndex] = useState(0);
+  const [images, setImages] = useState<{ url: string; id: number }[]>([]);
+
+  useEffect(() => {
+    const imageArray = [
+      { url: imageUrl1, id: 1 },
+      { url: imageUrl2, id: 2 },
+      { url: imageUrl3, id: 3 },
+      { url: imageUrl4, id: 4 },
+    ];
+    setImages(imageArray);
+  }, [imageUrl1, imageUrl2, imageUrl3, imageUrl4]);
 
   return (
     <div className="">
       <div className="h-[500px] relative">
-        <Image
-          src={images[index]?.url}
-          alt=""
-          fill
-          sizes="50vw"
-          className="object-cover"
-        />
+        <Image src={images[index]?.url} alt="" fill sizes="50vw" className="object-cover" />
       </div>
       <div className="flex justify-between gap-4 mt-8">
         {images.map((item: any, i: number) => (
-          <div
-            className="w-1/4 h-32 relative gap-4 mt-8 cursor-pointer"
-            key={item._id}
-            onClick={() => setIndex(i)}
-          >
-            <Image
-              src={item?.url}
-              alt=""
-              fill
-              sizes="30vw"
-              className="object-cover"
-            />
+          <div className="w-1/4 h-32 relative gap-4 mt-8 cursor-pointer" key={item._id} onClick={() => setIndex(i)}>
+            <Image src={item?.url} alt="" fill sizes="30vw" className="object-cover" />
           </div>
         ))}
       </div>

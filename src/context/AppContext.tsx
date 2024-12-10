@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { clearAll, getToken, getUser, saveToken } from '@/utils/localstorage';
+import { clearAll, getToken, getUser, saveToken, saveUser } from '@/utils/localstorage';
 import type { User } from '@/types/user';
 
 interface Props {
@@ -34,6 +34,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   // Hàm xử lý đăng xuất
   const handleLogout = () => {
     clearAll();
+    setUser(null);
     setIsLoggedIn(false);
   };
 

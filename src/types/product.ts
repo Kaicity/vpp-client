@@ -1,3 +1,5 @@
+import type { Pagination } from './pagination';
+
 export interface Product {
   id: number;
   name: string;
@@ -13,4 +15,9 @@ export interface Product {
   catalogName: string;
   createDate: Date;
   updateDate: Date;
+}
+
+export interface ProductPagination {
+  items: Product[];
+  pagination: Pagination;
 }

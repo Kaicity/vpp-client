@@ -12,7 +12,7 @@ const Navbar = () => {
     <div className="h-20 px-4 md:px-8 lg:px-6 xl:32 2xl:px-32 relative">
       <div className="h-full flex items-center justify-between md:hidden">
         {/* MOBILE */}
-        <Link href="/public">
+        <Link href="/">
           <div className="text-2xl tracking-wide">Thongular</div>
         </Link>
         <Menu />
@@ -22,7 +22,7 @@ const Navbar = () => {
       <div className="hidden md:flex items-center justify-between gap-8 h-full">
         {/* LEFT */}
         <div className="w-1/3 xl:1/2 flex items-center gap-12">
-          <Link href="/public">
+          <Link href="/">
             <div className="flex items-center gap-3">
               <Image src={Logo} alt="" width={24} height={24} />
               <div className="text-2xl tracking-wide">Thongular</div>

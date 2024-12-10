@@ -1,12 +1,20 @@
 import { instance } from './index';
-import type { Product } from '@/types/product';
+import type { Product, ProductPagination } from '@/types/product';
 
-export const getProducts = async (): Promise<Product[]> => {
+export const getProducts = async (pageNumber: number, pageSize: number): Promise<ProductPagination> => {
   try {
-    const response = await instance.get('/products');
+    const response = await instance.get(`/products?pageNumber=${pageNumber}&pageSize=${pageSize}`);
 
     if (response.data?.isSuccess && response.data.result) {
-      return response.data.result.items;
+      return {
+        items: response.data.result.items,
+        pagination: {
+          pageNumber: response.data.result.pageNumber,
+          pageSize: response.data.result.pageSize,
+          totalItems: response.data.result.totalItems,
+          totalPages: response.data.result.totalPages,
+        },
+      };
     } else {
       throw new Error('Failed to fetch products');
     }

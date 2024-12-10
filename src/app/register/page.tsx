@@ -30,7 +30,6 @@ const RegisterPage: React.FC = () => {
 
     setLoading(true);
     try {
-      console.log(formData);
       const requestData = await registerIsCustomer(formData);
       setTimeout(() => {
         setSuccessMessage(requestData);

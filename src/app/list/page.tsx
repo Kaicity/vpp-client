@@ -19,21 +19,28 @@ const ListPage = () => {
   const router = useRouter();
 
   const [products, setProducts] = useState<Product[]>([]);
+  const [pagination, setPagination] = useState({
+    pageNumber: 1,
+    pageSize: 24,
+    totalItems: 0,
+    totalPages: 0,
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState(false);
 
   useEffect(() => {
-    fetchProduct();
-  }, []);
+    fetchProduct(pagination.pageNumber, pagination.pageSize);
+  }, [pagination.pageNumber, pagination.pageSize]);
 
-  const fetchProduct = async () => {
+  const fetchProduct = async (pageNumber: number, pageSize: number) => {
     try {
       setLoading(true);
-      const data = await getProducts();
+      const { items, pagination } = await getProducts(pageNumber, pageSize);
       setTimeout(() => {
-        if (data) {
-          setProducts(data);
+        if (items && pagination) {
+          setProducts(items);
+          setPagination(pagination);
         }
         setLoading(false);
       }, 500);
@@ -52,6 +59,10 @@ const ListPage = () => {
     } catch (error: any) {
       throw new Error(error);
     }
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setPagination((prev) => ({ ...prev, pageNumber: newPage }));
   };
 
   return (
@@ -79,9 +90,40 @@ const ListPage = () => {
       ) : (
         <div className="">
           <ProductList products={products} addToCart={handleAddToCart} />
-          <div className="flex justify-center">
-            {' '}
-            <PaginationProduct />
+
+          <div className="flex justify-center gap-2 mt-12">
+            {/* PREVIOUS BUTTON */}
+            <button
+              className="px-4 py-2 bg-gray-300  disabled:opacity-50"
+              onClick={() => handlePageChange(pagination.pageNumber - 1)}
+              disabled={pagination.pageNumber === 1}
+            >
+              {'Trước'}
+            </button>
+
+            {/* PAGE NUMBERS */}
+            <div className="flex gap-1">
+              {Array.from({ length: pagination.totalPages }, (_, index) => (
+                <button
+                  key={index}
+                  className={`px-3 py-1 ${
+                    pagination.pageNumber === index + 1 ? 'bg-lama text-white' : 'bg-gray-200 text-gray-800'
+                  }`}
+                  onClick={() => handlePageChange(index + 1)}
+                >
+                  {index + 1}
+                </button>
+              ))}
+            </div>
+
+            {/* NEXT BUTTON */}
+            <button
+              className="px-4 py-2 bg-gray-300 disabled:opacity-50"
+              onClick={() => handlePageChange(pagination.pageNumber + 1)}
+              disabled={pagination.pageNumber === pagination.totalPages}
+            >
+              {'Sau'}
+            </button>
           </div>
         </div>
       )}
@@ -98,7 +140,6 @@ const ListPage = () => {
           setOpen={setMessage}
         />
       )}
-      ;
     </div>
   );
 };
