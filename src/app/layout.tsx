@@ -5,6 +5,8 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Banner from '@/components/Banner';
 import { AppProvider } from '@/context/AppContext';
+import ScrollToTopRouteChange from '@/components/ScrollToTopRouteChange';
+import ScrollToTop from '@/components/ScrollToTop';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -26,6 +28,8 @@ export default function RootLayout({
           <Navbar />
           {children}
           <Footer />
+          <ScrollToTopRouteChange />
+          <ScrollToTop />
         </AppProvider>
       </body>
     </html>

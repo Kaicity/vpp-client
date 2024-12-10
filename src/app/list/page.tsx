@@ -12,6 +12,7 @@ import PaginationProduct from '@/components/pagination';
 import { useApp } from '@/context/AppContext';
 import ModalDialog from '@/components/ModalDialog';
 import { useRouter } from 'next/navigation';
+import { getCatalogs } from '@/api/catalog';
 
 const ListPage = () => {
   const { isLoggedIn } = useApp();
@@ -25,18 +26,32 @@ const ListPage = () => {
     totalItems: 0,
     totalPages: 0,
   });
+  const [catalogs, setCatalogs] = useState<Catalog[]>([]);
+  const [filters, setFilters] = useState({
+    catalogId: '',
+    minPrice: '',
+    maxPrice: '',
+    name: '',
+  });
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState(false);
 
   useEffect(() => {
-    fetchProduct(pagination.pageNumber, pagination.pageSize);
-  }, [pagination.pageNumber, pagination.pageSize]);
+    fetchProducts(pagination.pageNumber, pagination.pageSize);
+    fetchCatalogs();
+  }, [pagination.pageNumber, pagination.pageSize, filters]);
 
-  const fetchProduct = async (pageNumber: number, pageSize: number) => {
+  const fetchProducts = async (pageNumber: number, pageSize: number) => {
     try {
       setLoading(true);
-      const { items, pagination } = await getProducts(pageNumber, pageSize);
+      const { items, pagination } = await getProducts(pageNumber, pageSize, {
+        catalogId: filters.catalogId,
+        minPrice: filters.minPrice,
+        maxPrice: filters.minPrice,
+        name: filters.name,
+      });
       setTimeout(() => {
         if (items && pagination) {
           setProducts(items);
@@ -44,6 +59,17 @@ const ListPage = () => {
         }
         setLoading(false);
       }, 500);
+    } catch (error: any) {
+      setError(error.message);
+    }
+  };
+
+  const fetchCatalogs = async () => {
+    try {
+      const data = await getCatalogs();
+      if (data) {
+        setCatalogs(data);
+      }
     } catch (error: any) {
       setError(error.message);
     }
@@ -79,10 +105,19 @@ const ListPage = () => {
           <Image src={BannerProduct} alt="" className="object-contain"></Image>
         </div>
       </div>
+
       {/* FILTER FOR PRODUCT */}
-      <Filter />
+      <Filter
+        catalogs={catalogs}
+        onFilterChange={(newFilters) => {
+          setFilters(newFilters);
+          setPagination((prev) => ({ ...prev, pageNumber: 1 })); // Reset về trang đầu tiên
+        }}
+      />
+
       {/* PRODUCTS */}
       <h1 className="mt-12 text-xl font-semibold">Tiện dụng cho bạn</h1>
+
       {loading ? (
         <div className="">
           <Spinner />

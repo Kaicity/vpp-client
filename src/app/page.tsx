@@ -4,48 +4,66 @@ import Image from 'next/image';
 import CategoryList from '@/components/CategoryList';
 import ProductList from '@/components/ProductList';
 import Slider from '@/components/Slider';
-import ProductFeatureOne from '../../../public/productFeature_1.webp';
-import ProductFeatureTwo from '../../../public/productFeature_2.webp';
-import ModalDialog from '@/components/ModalDialog';
-
-const products = [
-  {
-    id: 'product-1',
-    name: 'Combo 5 Ream giấy A3 80',
-    price: 70000,
-    description: 'Giấy ghi chú Pastel Thiên Long gồm 100 tờ trong 1 xấp với định lượng',
-  },
-  {
-    id: 'product-2',
-    name: 'Combo 10 Ream giấy A4 70',
-    price: 90000,
-    description: 'Giấy A4 với chất lượng cao, phù hợp cho văn phòng',
-  },
-  {
-    id: 'product-3',
-    name: 'Combo 5 Ream giấy A3 100',
-    price: 75000,
-    description: 'Giấy ghi chú cao cấp',
-  },
-  {
-    id: 'product-4',
-    name: 'Combo 5 Ream giấy A3 120',
-    price: 80000,
-    description: 'Giấy ghi chú cao cấp cho văn phòng',
-  },
-];
+import { useEffect, useState } from 'react';
+import { getCatalogs } from '@/api/catalog';
+import type { Product } from '@/types/product';
+import { getProducts } from '@/api/product';
 
 const HomePage = () => {
+  const [catalogs, setCatalogs] = useState<Catalog[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [pagination, setPagination] = useState({
+    pageNumber: 1,
+    pageSize: 4,
+    totalItems: 0,
+    totalPages: 0,
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+
+    fetchProduct(pagination.pageNumber, pagination.pageSize);
+    fetchCatalogs();
+  }, [pagination.pageNumber, pagination.pageSize]);
+
+  const fetchCatalogs = async () => {
+    try {
+      const data = await getCatalogs();
+      if (data) {
+        setCatalogs(data);
+      }
+    } catch (error: any) {
+      setError(error.message);
+    }
+  };
+
+  const fetchProduct = async (pageNumber: number, pageSize: number) => {
+    try {
+      setLoading(true);
+      const { items, pagination } = await getProducts(pageNumber, pageSize);
+      setTimeout(() => {
+        if (items && pagination) {
+          setProducts(items);
+          setPagination(pagination);
+        }
+        setLoading(false);
+      }, 500);
+    } catch (error: any) {
+      setError(error.message);
+    }
+  };
+
   return (
     <div className="">
       <Slider />
       <div className="mt-24 px-4 md:px-8 lg:px-6 xl:32 2xl:px-32">
         <h1 className="text-2xl">Sản phẩm đặc trưng</h1>
-        <ProductList products={[]} addToCart={() => {}} />
+        <ProductList products={products} addToCart={() => {}} />
       </div>
       <div className="mt-24">
         <h1 className="text-2xl px-4 md:px-8 lg:px-6 xl:32 2xl:px-32 mb-12">Loại sản phẩm</h1>
-        <CategoryList />
+        <CategoryList catalogs={catalogs} />
       </div>
       <div className="mt-24 px-4 md:px-8 lg:px-6 xl:32 2xl:px-32">
         <div className="flex flex-col lg:flex-row items-center gap-8">
@@ -68,7 +86,7 @@ const HomePage = () => {
 
       <div className="mt-24 px-4 md:px-8 lg:px-6 xl:32 2xl:px-32">
         <h1 className="text-2xl">Sản phẩm mới nhất</h1>
-        <ProductList products={[]} addToCart={() => {}} />
+        <ProductList products={products} addToCart={() => {}} />
       </div>
     </div>
   );

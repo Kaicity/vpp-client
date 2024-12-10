@@ -1,9 +1,36 @@
 import { instance } from './index';
 import type { Product, ProductPagination } from '@/types/product';
 
-export const getProducts = async (pageNumber: number, pageSize: number): Promise<ProductPagination> => {
+interface FilterParams {
+  catalogId?: string;
+  minPrice?: string;
+  maxPrice?: string;
+  name?: string;
+}
+
+export const getProducts = async (
+  pageNumber: number,
+  pageSize: number,
+  filters?: FilterParams,
+): Promise<ProductPagination> => {
   try {
-    const response = await instance.get(`/products?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    // Xây dựng URL query
+    let query = `/products?pageNumber=${pageNumber}&pageSize=${pageSize}`;
+
+    if (filters?.catalogId) {
+      query += `&catalogId=${encodeURIComponent(filters.catalogId)}`;
+    }
+    if (filters?.minPrice) {
+      query += `&minPrice=${encodeURIComponent(filters.minPrice)}`;
+    }
+    if (filters?.maxPrice) {
+      query += `&maxPrice=${encodeURIComponent(filters.maxPrice)}`;
+    }
+    if (filters?.name) {
+      query += `&name=${encodeURIComponent(filters.name)}`;
+    }
+
+    const response = await instance.get(query);
 
     if (response.data?.isSuccess && response.data.result) {
       return {
