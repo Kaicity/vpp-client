@@ -30,7 +30,7 @@ instance.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       console.error('Unauthorized. Redirecting to login.');
-      window.location.href = '/';
+      // window.location.href = '/';
     }
     return Promise.reject(error);
   },

@@ -1,39 +1,51 @@
 'use client';
 
+import { useApp } from '@/context/AppContext';
+import { numericToMoney } from '@/utils/formatMoney';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import ProductDefault from 'public/product_default.webp';
+import Image from 'next/image';
+
 const CheckoutCartPage = () => {
+  const { carts, fetchCarts } = useApp();
+  const router = useRouter();
+
+  useEffect(() => {
+    fetchCarts();
+
+    if (carts.length == 0) {
+      router.push('/');
+    }
+  }, [carts]);
+
   return (
     <div className="grid sm:px-10 lg:grid-cols-2 lg:px-20 xl:px-32 mt-12">
       <div className="px-4 pt-8">
-        <p className="text-xl font-medium">Order Summary</p>
-        <p className="text-gray-400">Check your items. And select a suitable shipping method.</p>
+        <p className="text-xl font-medium">Chi tiết đơn hàng</p>
+        <p className="text-gray-400">Vui lòng kiểm tra kỹ và chọn phương thức thanh toán chính xác</p>
         <div className="mt-8 space-y-3 rounded-lg border bg-white px-2 py-4 sm:px-6">
-          <div className="flex flex-col rounded-lg bg-white sm:flex-row">
-            <img
-              className="m-2 h-24 w-28 rounded-md border object-cover object-center"
-              src="https://images.unsplash.com/flagged/photo-1556637640-2c80d3201be8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8c25lYWtlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60"
-              alt=""
-            />
-            <div className="flex w-full flex-col px-4 py-4">
-              <span className="font-semibold">Nike Air Max Pro 8888 - Super Light</span>
-              <span className="float-right text-gray-400">42EU - 8.5US</span>
-              <p className="text-lg font-bold">$138.99</p>
+          {carts.map((cart) => (
+            <div key={cart?.id} className="flex flex-col rounded-lg bg-white sm:flex-row">
+              <Image
+                width={72}
+                height={96}
+                className="m-2 h-24 w-28  border object-cover object-center"
+                src={cart?.imageUrl || ProductDefault}
+                alt=""
+              />
+              <div className="flex w-full flex-col px-4 py-4">
+                <span className="font-semibold">{cart?.name}</span>
+                <span className="float-right text-gray-400">
+                  {numericToMoney(cart?.price!)} / số lượng: {cart?.quantity}
+                </span>
+                <p className="text-lg font-bold">{numericToMoney(cart?.price! * cart?.quantity)}</p>
+              </div>
             </div>
-          </div>
-          <div className="flex flex-col rounded-lg bg-white sm:flex-row">
-            <img
-              className="m-2 h-24 w-28 rounded-md border object-cover object-center"
-              src="https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8c25lYWtlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60"
-              alt=""
-            />
-            <div className="flex w-full flex-col px-4 py-4">
-              <span className="font-semibold">Nike Air Max Pro 8888 - Super Light</span>
-              <span className="float-right text-gray-400">42EU - 8.5US</span>
-              <p className="mt-auto text-lg font-bold">$238.99</p>
-            </div>
-          </div>
+          ))}
         </div>
 
-        <p className="mt-8 text-lg font-medium">Shipping Methods</p>
+        <p className="mt-8 text-lg font-medium">Phương thức thanh toán</p>
         <form className="mt-5 grid gap-6">
           <div className="relative">
             <input className="peer hidden" id="radio_1" type="radio" name="radio" checked />

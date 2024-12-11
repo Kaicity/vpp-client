@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import CartModal from './CartModal';
 import { useApp } from '@/context/AppContext';
-import { deleteAllItemCart, deleteItemCartById, getCarts, updateItemCartById } from '@/api/cart';
+import { deleteAllItemCart, deleteItemCartById, updateItemCartById } from '@/api/cart';
 import type { Cart, ItemCart } from '@/types/cart';
 import type { Product } from '@/types/product';
 
@@ -38,8 +38,7 @@ const NavIcons = () => {
 
   const logoutAccount = () => {
     handleLogout();
-
-    router.push('/');
+    window.location.href = '/';
   };
 
   const handleDeleteAllItemCarts = async () => {

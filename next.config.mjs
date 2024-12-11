@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["images.pexels.com", "example.com"], // Add the domains here
+    domains: ['images.pexels.com', 'th.bing.com', 'sp-ao.shortpixel.ai'], // Add the domains here
   },
 };
 
