@@ -9,8 +9,9 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import CartModal from './CartModal';
 import { useApp } from '@/context/AppContext';
-import { deleteAllItemCart, deleteItemCartById, getCarts } from '@/api/cart';
-import type { Cart } from '@/types/cart';
+import { deleteAllItemCart, deleteItemCartById, getCarts, updateItemCartById } from '@/api/cart';
+import type { Cart, ItemCart } from '@/types/cart';
+import type { Product } from '@/types/product';
 
 const NavIcons = () => {
   const { isLoggedIn, handleLogout, isCartOpen, toggleCart, closeCart, user, fetchCarts, carts } = useApp();
@@ -63,6 +64,42 @@ const NavIcons = () => {
     }
   };
 
+  const handleDecrease = async (cart: Cart) => {
+    try {
+      const itemCart: ItemCart = {
+        productId: cart?.id,
+        quantity: cart?.quantity - 1,
+      };
+
+      console.log(itemCart);
+
+      const request = await updateItemCartById(itemCart);
+      if (request) {
+        fetchCarts();
+      }
+    } catch (error: any) {
+      throw new Error(error?.message);
+    }
+  };
+
+  const handleIncrease = async (cart: Cart) => {
+    try {
+      const itemCart: ItemCart = {
+        productId: cart?.id,
+        quantity: cart?.quantity + 1,
+      };
+
+      console.log(itemCart);
+
+      const request = await updateItemCartById(itemCart);
+      if (request) {
+        fetchCarts();
+      }
+    } catch (error: any) {
+      throw new Error(error?.message);
+    }
+  };
+
   return (
     <div className="flex items-center gap-4 xl:gap-6 relative">
       {/* Profile Icon */}
@@ -106,6 +143,8 @@ const NavIcons = () => {
           carts={carts}
           handleRemoveItemCart={handleDeleteItemCartById}
           handleRemoveAllItemCart={handleDeleteAllItemCarts}
+          handleDecrease={handleDecrease}
+          handleIncrease={handleIncrease}
         />
       )}
     </div>

@@ -60,3 +60,18 @@ export const deleteItemCartById = async (id: Number): Promise<boolean> => {
     throw new Error(errorMessage);
   }
 };
+
+export const updateItemCartById = async (itemCart: ItemCart): Promise<boolean> => {
+  try {
+    const response = await instance.put(`cart/update-item`, itemCart);
+
+    if (response.data?.isSuccess) {
+      return response?.data?.isSuccess;
+    } else {
+      throw new Error('Failed to request update item of cart');
+    }
+  } catch (error: any) {
+    const errorMessage = error.response?.data?.message;
+    throw new Error(errorMessage);
+  }
+};

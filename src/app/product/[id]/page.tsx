@@ -1,17 +1,35 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Add from '@/components/Add';
 import ProductImage from '@/components/ProductImages';
 import { useEffect, useState } from 'react';
 import type { Product } from '@/types/product';
 import { getProductById } from '@/api/product';
 import { numericToMoney } from '@/utils/formatMoney';
-import Spinner from '@/components/Spinner';
+import { useApp } from '@/context/AppContext';
+import { createCart } from '@/api/cart';
+import type { ItemCart } from '@/types/cart';
+import ModalDialog from '@/components/ModalDialog';
+import Toast from '@/components/Toast';
 
 const ProductDetailPage = () => {
+  const router = useRouter();
+
+  const { isLoggedIn, fetchCarts, closeCart } = useApp();
   const { id } = useParams<{ id: string }>();
+
+  // PRODUCT
   const [product, setProduct] = useState<Product | null>(null);
+
+  //CART ITEM
+  const [quantity, setQuantity] = useState(1);
+  const [messageAddItemSuccess, setMessageAddItemSuccess] = useState(false);
+  const [contentMessage, setContentMessage] = useState<string | ''>('');
+
+  // MESSAGE
+  const [message, setMessage] = useState(false);
+
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -29,23 +47,70 @@ const ProductDetailPage = () => {
     fetchProductById();
   }, []);
 
-  if (!product) {
-    return <div className="text-sm text-center h-52 py-12">Không tìm thấy sản phẩm này</div>;
-  }
+  const handleQuantityChange = (newQuantity: number) => {
+    setQuantity(newQuantity);
+  };
 
-  if (loading) {
-    return <Spinner />;
-  }
+  const handleAddItemToCart = async () => {
+    try {
+      if (isLoggedIn) {
+        const itemCart: ItemCart = {
+          productId: product!.id,
+          quantity: quantity,
+        };
+
+        const request = await createCart(itemCart);
+        if (request) {
+          showMessageToast();
+          setContentMessage('Đã thêm vào giỏ hàng');
+
+          //Close modal cart và fetch lại cart, quay lại trang sản phẩm mua tiếp ^ ^
+          closeCart();
+          fetchCarts();
+          router.push('/list');
+        }
+      } else {
+        setMessage(true);
+      }
+    } catch (error: any) {
+      showMessageToast();
+      setContentMessage(error?.message);
+      throw new Error(error);
+    }
+  };
+
+  const showMessageToast = () => {
+    setMessageAddItemSuccess(true);
+    setTimeout(() => {
+      setMessageAddItemSuccess(false);
+    }, 1500);
+  };
+
+  const handleBuyNow = () => {};
+
+  const handleFavorite = () => {};
+
+  const successIconSvg = (
+    <svg
+      className="w-5 h-5"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="currentColor"
+      viewBox="0 0 20 20"
+    >
+      <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+    </svg>
+  );
 
   return (
     <div className="px-4 md:px-8 lg:px-6 xl:32 2xl:px-32 relative flex flex-col lg:flex-row gap-16 mt-12">
       {/* IMG */}
       <div className="w-full lg:w-1/2 lg:sticky top-20 h-max">
         <ProductImage
-          imageUrl1={product?.imageUrl1}
-          imageUrl2={product?.imageUrl2}
-          imageUrl3={product?.imageUrl3}
-          imageUrl4={product?.imageUrl4}
+          imageUrl1={product?.imageUrl1 || ''}
+          imageUrl2={product?.imageUrl2 || ''}
+          imageUrl3={product?.imageUrl3 || ''}
+          imageUrl4={product?.imageUrl4 || ''}
         />
       </div>
       {/* TEXT */}
@@ -57,13 +122,18 @@ const ProductDetailPage = () => {
         </p>
         <div className="h-[2px] bg-gray-100"></div>
         <div className="flex items-center gap-4">
-          <h3 className="text-xl text-gray-500 line-through">{numericToMoney(product?.price + 100000)}đ</h3>
-          <h1 className="text-2xl font-medium">{numericToMoney(product?.price)}</h1>
+          <h3 className="text-xl text-gray-500 line-through">{numericToMoney(product?.price! + 100000)}đ</h3>
+          <h1 className="text-2xl font-medium">{numericToMoney(product?.price!)}</h1>
         </div>
         <div className="h-[2px] bg-gray-100"></div>
         {/* Đối với thương mại điện tử quần áo thì thêm sizes và colors */}
 
-        <Add />
+        <Add
+          handleAddItemToCart={handleAddItemToCart}
+          handleBuyNow={handleBuyNow}
+          hanldeFavorite={handleFavorite}
+          onQuantityChange={handleQuantityChange}
+        />
 
         <div className="h-[2px] bg-gray-100"></div>
 
@@ -72,6 +142,23 @@ const ProductDetailPage = () => {
           <p>{product?.description}</p>
         </div>
       </div>
+
+      {/* MESSAGE DIALOG */}
+      {message && (
+        <ModalDialog
+          title="Thông báo"
+          content="Vui lòng đăng nhập để tiếp tục mua hàng"
+          handleMain={() => router.push('/login')}
+          handlePrev={() => setMessage(false)}
+          titleButtonMain="Đăng nhập ngay"
+          titleButtonPrev="Để sau"
+          open={message}
+          setOpen={setMessage}
+        />
+      )}
+
+      {/* TOAST MESSAGE */}
+      {messageAddItemSuccess && <Toast content={contentMessage || ''} icon={successIconSvg} />}
     </div>
   );
 };
