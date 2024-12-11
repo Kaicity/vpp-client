@@ -22,7 +22,7 @@ const ScrollToTop: React.FC = () => {
     isVisible && (
       <button
         onClick={handleScrollToTop}
-        className="fixed bottom-5 right-5 bg-gray-500 rounded-full text-white border-none px-3 py-2 cursor-pointer shadow-lg hover:bg-black"
+        className="fixed bottom-5 right-5 bg-gray-500 rounded-full text-white border-none px-2 py-2 cursor-pointer shadow-lg hover:bg-black z-20"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

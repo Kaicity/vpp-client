@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Product } from '@/types/product';
+import ProductDefault from 'public/product_default.webp';
 
 interface ProductListProps {
   products: Product[];
@@ -17,13 +18,19 @@ const ProductList: React.FC<ProductListProps> = ({ products, addToCart }) => {
           <Link href={`/product/${product.id}`} className="block">
             <div className="relative w-full h-80">
               <Image
-                src={product?.imageUrl1 || ''}
+                src={product?.imageUrl1 || ProductDefault}
                 alt=""
                 fill
                 sizes="25vw"
                 className="absolute object-cover z-10 hover:opacity-0 transition-opacity easy duration-500"
               />
-              <Image src={product?.imageUrl2 || ''} alt="" fill sizes="25vw" className="absolute object-cover" />
+              <Image
+                src={product?.imageUrl2 || ProductDefault}
+                alt=""
+                fill
+                sizes="25vw"
+                className="absolute object-cover"
+              />
             </div>
             <div className="flex justify-between mt-4">
               <span className="font-medium">{product?.name}</span>

@@ -25,14 +25,13 @@ const LoginPage: React.FC = () => {
     setLoading(true);
     try {
       const data = await login(formData);
-      setTimeout(() => {
-        setLoading(false);
-        handleLogin(data);
 
-        //save user info
-        handleGetUserInfo();
-        router.replace('/list');
-      }, 1500);
+      setLoading(false);
+      handleLogin(data);
+
+      //Lấy thông tin người dùng
+      await handleGetUserInfo();
+      router.replace('/list');
     } catch (error: any) {
       setLoading(false);
       setError(error.message);
@@ -43,6 +42,7 @@ const LoginPage: React.FC = () => {
     try {
       const userData = await getUserInfo();
       saveUser(userData);
+      location.reload();
     } catch (error: any) {
       setError(error.message);
     }

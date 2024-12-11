@@ -13,12 +13,16 @@ import { useApp } from '@/context/AppContext';
 import ModalDialog from '@/components/ModalDialog';
 import { useRouter } from 'next/navigation';
 import { getCatalogs } from '@/api/catalog';
+import Toast from '@/components/Toast';
+import { ItemCart } from '@/types/cart';
+import { createCart } from '@/api/cart';
 
 const ListPage = () => {
   const { isLoggedIn } = useApp();
 
   const router = useRouter();
 
+  // PRODUCTS
   const [products, setProducts] = useState<Product[]>([]);
   const [pagination, setPagination] = useState({
     pageNumber: 1,
@@ -26,6 +30,8 @@ const ListPage = () => {
     totalItems: 0,
     totalPages: 0,
   });
+
+  // CATALOGS
   const [catalogs, setCatalogs] = useState<Catalog[]>([]);
   const [filters, setFilters] = useState({
     catalogId: '',
@@ -34,6 +40,11 @@ const ListPage = () => {
     name: '',
   });
 
+  // CART ITEM
+  const [messageAddItemSuccess, setMessageAddItemSuccess] = useState(false);
+  const [contentMessage, setContentMessage] = useState<string | ''>('');
+
+  //MESSAGE RESPONSE
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState(false);
@@ -75,21 +86,53 @@ const ListPage = () => {
     }
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async (product: Product) => {
     try {
       if (isLoggedIn) {
         alert('Loggin rồi thêm vào giỏ hàng đi');
+
+        const itemCart: ItemCart = {
+          productId: product?.id,
+          quantity: 1,
+        };
+
+        const request = await createCart(itemCart);
+        if (request) {
+          showMessageToast();
+          setContentMessage('Đã thêm vào giỏ hàng');
+        }
       } else {
         setMessage(true);
       }
     } catch (error: any) {
+      showMessageToast();
+      setContentMessage(error?.message);
       throw new Error(error);
     }
+  };
+
+  const showMessageToast = () => {
+    setMessageAddItemSuccess(true);
+    setTimeout(() => {
+      setMessageAddItemSuccess(false);
+    }, 1500);
   };
 
   const handlePageChange = (newPage: number) => {
     setPagination((prev) => ({ ...prev, pageNumber: newPage }));
   };
+
+  const successIconSvg = (
+    <svg
+      className="w-5 h-5"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="currentColor"
+      viewBox="0 0 20 20"
+    >
+      <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+    </svg>
+  );
 
   return (
     <div className="px-4 md:px-8 lg:px-16 xl:32 2xl:px-64 relative">
@@ -162,6 +205,7 @@ const ListPage = () => {
           </div>
         </div>
       )}
+
       {/* MESSAGE DIALOG */}
       {message && (
         <ModalDialog
@@ -173,6 +217,13 @@ const ListPage = () => {
           titleButtonPrev="Để sau"
           open={message}
           setOpen={setMessage}
+        />
+      )}
+      {/* TOAST MESSAGE */}
+      {messageAddItemSuccess && (
+        <Toast
+          content={contentMessage || ''}
+          icon={successIconSvg} // Truyền SVG tùy chỉnh
         />
       )}
     </div>

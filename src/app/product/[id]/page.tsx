@@ -42,10 +42,10 @@ const ProductDetailPage = () => {
       {/* IMG */}
       <div className="w-full lg:w-1/2 lg:sticky top-20 h-max">
         <ProductImage
-          imageUrl1={product?.imageUrl1 || ''}
-          imageUrl2={product?.imageUrl2 || ''}
-          imageUrl3={product?.imageUrl3 || ''}
-          imageUrl4={product?.imageUrl4 || ''}
+          imageUrl1={product?.imageUrl1}
+          imageUrl2={product?.imageUrl2}
+          imageUrl3={product?.imageUrl3}
+          imageUrl4={product?.imageUrl4}
         />
       </div>
       {/* TEXT */}

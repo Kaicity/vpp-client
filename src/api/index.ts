@@ -18,6 +18,16 @@ instance.interceptors.request.use(
     return config;
   },
   (error) => {
+    return Promise.reject(error);
+  },
+);
+
+// Thêm interceptor để xử lý các lỗi (ví dụ: 401 Unauthorized)
+instance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
     if (error.response?.status === 401) {
       console.error('Unauthorized. Redirecting to login.');
       window.location.href = '/';

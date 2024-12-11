@@ -9,14 +9,27 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import CartModal from './CartModal';
 import { useApp } from '@/context/AppContext';
+import { getCarts } from '@/api/cart';
 
 const NavIcons = () => {
   const { isLoggedIn, handleLogout, isCartOpen, toggleCart, closeCart, user } = useApp();
 
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
-
   const router = useRouter();
+
+  useEffect(() => {
+    fetchCarts();
+  }, []);
+
+  const fetchCarts = async () => {
+    try {
+      const data = await getCarts();
+      console.log(data)
+    } catch (error: any) {
+      throw new Error(error?.message);
+    }
+  };
 
   const handleProfile = () => {
     if (!isLoggedIn) {
