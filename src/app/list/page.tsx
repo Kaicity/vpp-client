@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react';
 import { Product } from '@/types/product';
 import { getProducts } from '@/api/product';
 import Spinner from '@/components/Spinner';
-import PaginationProduct from '@/components/pagination';
 import { useApp } from '@/context/AppContext';
 import ModalDialog from '@/components/ModalDialog';
 import { useRouter } from 'next/navigation';
@@ -16,9 +15,8 @@ import { getCatalogs } from '@/api/catalog';
 import Toast from '@/components/Toast';
 import { ItemCart } from '@/types/cart';
 import { createCart } from '@/api/cart';
-
 const ListPage = () => {
-  const { isLoggedIn } = useApp();
+  const { isLoggedIn, closeCart, fetchCarts } = useApp();
 
   const router = useRouter();
 
@@ -89,8 +87,6 @@ const ListPage = () => {
   const handleAddToCart = async (product: Product) => {
     try {
       if (isLoggedIn) {
-        alert('Loggin rồi thêm vào giỏ hàng đi');
-
         const itemCart: ItemCart = {
           productId: product?.id,
           quantity: 1,
@@ -100,6 +96,10 @@ const ListPage = () => {
         if (request) {
           showMessageToast();
           setContentMessage('Đã thêm vào giỏ hàng');
+
+          //Close modal cart và fetch lại cart
+          closeCart();
+          fetchCarts();
         }
       } else {
         setMessage(true);

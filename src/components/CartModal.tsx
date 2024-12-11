@@ -4,18 +4,29 @@ import Image from 'next/image';
 import CartNull from '../../public/cart_null.webp';
 import { XCircleIcon } from '@heroicons/react/24/solid';
 import { useApp } from '@/context/AppContext';
+import type { Cart } from '@/types/cart';
+import { numericToMoney } from '@/utils/formatMoney';
+import { useEffect, useState } from 'react';
+import Spinner from './Spinner';
 
 interface Props {
+  carts: Cart[];
+  handleRemoveItemCart: (id: number) => void;
+  handleRemoveAllItemCart: () => void;
   handleGoToCheckoutCart: () => void;
 }
 
-const CartModal: React.FC<Props> = ({ handleGoToCheckoutCart }) => {
-  const cartItems = true;
+const CartModal: React.FC<Props> = ({
+  handleGoToCheckoutCart,
+  handleRemoveAllItemCart,
+  handleRemoveItemCart,
+  carts,
+}) => {
   const { closeCart } = useApp();
 
   return (
     <div className="w-max absolute p-4 top-12 right-0 text-sm shadow-[0_3px_10px_rgb(0,0,0,0.2)] bg-white flex flex-col gap-6 z-20">
-      {!cartItems ? (
+      {!carts.length ? (
         <div className="flex flex-col items-center">
           <Image src={CartNull} alt="" width={270} height={270} className="object-cover" />
           <div className="text-sm text-gray-500">Chưa có sản phẩm trong giỏ hàng...</div>
@@ -24,102 +35,52 @@ const CartModal: React.FC<Props> = ({ handleGoToCheckoutCart }) => {
         <>
           <div className="flex justify-between items-center">
             <h2 className="px-2 text-xl font-semibold">Giỏ hàng của bạn</h2>
-
             <button onClick={closeCart}>
               <XCircleIcon className="w-7 h-7 text-brandPrimary" />
             </button>
           </div>
+
+          <div className="px-2">
+            <span className="text-lama cursor-pointer" onClick={handleRemoveAllItemCart}>
+              Xóa tất cả
+            </span>
+          </div>
+
           {/* LIST PRODUCT  */}
           <div className="flex flex-col gap-8 h-96 overflow-y-auto scrollbar">
             {/* ITEMS_1 */}
-            <div className="flex px-2 gap-4">
-              <Image
-                src="https://images.pexels.com/photos/616849/pexels-photo-616849.jpeg?auto=compress&cs=tinysrgb&w=600"
-                alt=""
-                width={72}
-                height={96}
-                className="object-cover"
-              />
-              <div className="flex flex-col justify-between w-full">
-                {/* TOP */}
-                <div className="">
-                  {/* TITLE */}
-                  <div className="flex items-center justify-between gap-8">
-                    <h3 className="font-semibold">Cuốn nhật ký</h3>
-                    <div className="p-1 bg-gray-50">120.000 đ</div>
+            {carts.map((cart) => (
+              <div className="flex px-2 gap-4" key={cart?.id}>
+                <Image src={cart?.imageUrl} alt="" width={72} height={96} className="object-cover" />
+                <div className="flex flex-col justify-between w-full">
+                  {/* TOP */}
+                  <div className="">
+                    {/* TITLE */}
+                    <div className="flex items-center justify-between gap-8">
+                      <h3 className="font-semibold">{cart?.name}</h3>
+                      <div className="p-1 bg-gray-50">{numericToMoney(cart?.price)}</div>
+                    </div>
+                    {/* DESC */}
+                    <div className="text-sm text-gray-500">Mã hàng: {cart?.id}</div>
                   </div>
-                  {/* DESC */}
-                  <div className="text-sm text-gray-500">Hiện có</div>
-                </div>
-                {/* BOTTOM */}
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Số lượng: 2</span>
-                  <span className="text-blue-500 cursor-pointer">Xóa</span>
+                  {/* BOTTOM */}
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Số lượng: {cart?.quantity}</span>
+                    <button className="text-lama cursor-pointer" onClick={() => handleRemoveItemCart(cart?.id)}>
+                      Xóa
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            {/* ITEMS_1 */}
-            <div className="flex px-2 gap-4">
-              <Image
-                src="https://images.pexels.com/photos/616849/pexels-photo-616849.jpeg?auto=compress&cs=tinysrgb&w=600"
-                alt=""
-                width={72}
-                height={96}
-                className="object-cover"
-              />
-              <div className="flex flex-col justify-between w-full">
-                {/* TOP */}
-                <div className="">
-                  {/* TITLE */}
-                  <div className="flex items-center justify-between gap-8">
-                    <h3 className="font-semibold">Cuốn nhật ký</h3>
-                    <div className="p-1 bg-gray-50">120.000 đ</div>
-                  </div>
-                  {/* DESC */}
-                  <div className="text-sm text-gray-500">Hiện có</div>
-                </div>
-                {/* BOTTOM */}
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Số lượng: 2</span>
-                  <span className="text-blue-500 cursor-pointer">Xóa</span>
-                </div>
-              </div>
-            </div>
-
-            {/* ITEMS_1 */}
-            <div className="flex px-2 gap-4">
-              <Image
-                src="https://images.pexels.com/photos/616849/pexels-photo-616849.jpeg?auto=compress&cs=tinysrgb&w=600"
-                alt=""
-                width={72}
-                height={96}
-                className="object-cover"
-              />
-              <div className="flex flex-col justify-between w-full">
-                {/* TOP */}
-                <div className="">
-                  {/* TITLE */}
-                  <div className="flex items-center justify-between gap-8">
-                    <h3 className="font-semibold">Cuốn nhật ký</h3>
-                    <div className="p-1 bg-gray-50">120.000 đ</div>
-                  </div>
-                  {/* DESC */}
-                  <div className="text-sm text-gray-500">Hiện có</div>
-                </div>
-                {/* BOTTOM */}
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Số lượng: 2</span>
-                  <span className="text-blue-500 cursor-pointer">Xóa</span>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
 
           {/* TOTAL AMOUNT */}
           <div className="px-2 flex items-center justify-between">
             <h3 className="font-semibold">Tổng cộng</h3>
-            <h3 className="font-semibold">360.000 đ</h3>
+            <h3 className="font-semibold">
+              {numericToMoney(carts.reduce((total, item) => total + item.price * item.quantity, 0))}
+            </h3>
           </div>
 
           <div className="px-2">

@@ -25,13 +25,11 @@ const LoginPage: React.FC = () => {
     setLoading(true);
     try {
       const data = await login(formData);
-
       setLoading(false);
       handleLogin(data);
 
       //Lấy thông tin người dùng
       await handleGetUserInfo();
-      router.replace('/list');
     } catch (error: any) {
       setLoading(false);
       setError(error.message);
@@ -42,7 +40,7 @@ const LoginPage: React.FC = () => {
     try {
       const userData = await getUserInfo();
       saveUser(userData);
-      location.reload();
+      window.location.href = '/list';
     } catch (error: any) {
       setError(error.message);
     }

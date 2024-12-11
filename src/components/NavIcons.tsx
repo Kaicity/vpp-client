@@ -3,33 +3,25 @@
 import Image from 'next/image';
 import Profile from '../../public/profile.png';
 import Notification from '../../public/notification.png';
-import Cart from '../../public/cart.png';
+import CartDefault from '../../public/cart.png';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import CartModal from './CartModal';
 import { useApp } from '@/context/AppContext';
-import { getCarts } from '@/api/cart';
+import { deleteAllItemCart, deleteItemCartById, getCarts } from '@/api/cart';
+import type { Cart } from '@/types/cart';
 
 const NavIcons = () => {
-  const { isLoggedIn, handleLogout, isCartOpen, toggleCart, closeCart, user } = useApp();
+  const { isLoggedIn, handleLogout, isCartOpen, toggleCart, closeCart, user, fetchCarts, carts } = useApp();
+  const router = useRouter();
 
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
-  const router = useRouter();
-
+  // CART
   useEffect(() => {
     fetchCarts();
-  }, []);
-
-  const fetchCarts = async () => {
-    try {
-      const data = await getCarts();
-      console.log(data)
-    } catch (error: any) {
-      throw new Error(error?.message);
-    }
-  };
+  }, [isCartOpen]);
 
   const handleProfile = () => {
     if (!isLoggedIn) {
@@ -45,7 +37,30 @@ const NavIcons = () => {
 
   const logoutAccount = () => {
     handleLogout();
+
     router.push('/');
+  };
+
+  const handleDeleteAllItemCarts = async () => {
+    try {
+      const request = await deleteAllItemCart();
+      if (request) {
+        fetchCarts();
+      }
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  };
+
+  const handleDeleteItemCartById = async (id: number) => {
+    try {
+      const request = await deleteItemCartById(id);
+      if (request) {
+        fetchCarts();
+      }
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
   };
 
   return (
@@ -80,12 +95,19 @@ const NavIcons = () => {
 
       {/* Cart Icon */}
       <div className="relative cursor-pointer">
-        <Image src={Cart} alt="Cart" width={22} height={22} className="cursor-pointer" onClick={toggleCart} />
+        <Image src={CartDefault} alt="Cart" width={22} height={22} className="cursor-pointer" onClick={toggleCart} />
         <div className="absolute -top-4 -right-4 w-6 h-6 bg-lama rounded-full text-white text-sm flex items-center justify-center">
-          2
+          {carts.length}
         </div>
       </div>
-      {isCartOpen && <CartModal handleGoToCheckoutCart={goToCheckoutCart} />}
+      {isCartOpen && (
+        <CartModal
+          handleGoToCheckoutCart={goToCheckoutCart}
+          carts={carts}
+          handleRemoveItemCart={handleDeleteItemCartById}
+          handleRemoveAllItemCart={handleDeleteAllItemCarts}
+        />
+      )}
     </div>
   );
 };
