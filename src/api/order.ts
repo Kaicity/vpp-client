@@ -1,4 +1,4 @@
-import type { Order } from '@/types/order';
+import type { ItemOrder, Order } from '@/types/order';
 import { instance } from '.';
 import type { OrderDetail } from '@/types/orderDetail';
 
@@ -7,9 +7,9 @@ interface FilterParams {
   sortBy?: string;
 }
 
-export const createOrder = async (order: Order): Promise<boolean> => {
+export const createOrder = async (itemOrder: ItemOrder): Promise<boolean> => {
   try {
-    const response = await instance.post(`order/create`, order);
+    const response = await instance.post(`order/create`, itemOrder);
 
     if (response.data?.isSuccess) {
       return response?.data?.isSuccess;
