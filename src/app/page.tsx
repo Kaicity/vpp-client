@@ -22,7 +22,6 @@ const HomePage = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-
     fetchProduct(pagination.pageNumber, pagination.pageSize);
     fetchCatalogs();
   }, [pagination.pageNumber, pagination.pageSize]);
@@ -59,7 +58,7 @@ const HomePage = () => {
       <Slider />
       <div className="mt-24 px-4 md:px-8 lg:px-6 xl:32 2xl:px-32">
         <h1 className="text-2xl">Sản phẩm đặc trưng</h1>
-        <ProductList products={products} addToCart={() => {}} />
+        <ProductList showAddCart={false} products={products} addToCart={() => {}} />
       </div>
       <div className="mt-24">
         <h1 className="text-2xl px-4 md:px-8 lg:px-6 xl:32 2xl:px-32 mb-12">Loại sản phẩm</h1>
@@ -82,11 +81,6 @@ const HomePage = () => {
             className="object-cover"
           />
         </div>
-      </div>
-
-      <div className="mt-24 px-4 md:px-8 lg:px-6 xl:32 2xl:px-32">
-        <h1 className="text-2xl">Sản phẩm mới nhất</h1>
-        <ProductList products={products} addToCart={() => {}} />
       </div>
     </div>
   );

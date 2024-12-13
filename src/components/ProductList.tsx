@@ -8,9 +8,10 @@ import ProductDefault from 'public/product_default.webp';
 interface ProductListProps {
   products: Product[];
   addToCart: (product: Product) => void;
+  showAddCart: boolean;
 }
 
-const ProductList: React.FC<ProductListProps> = ({ products, addToCart }) => {
+const ProductList: React.FC<ProductListProps> = ({ products, addToCart, showAddCart }) => {
   return (
     <div className="mt-12 flex gap-x-8 gap-y-16 justify-between flex-wrap">
       {products.length > 0 ? (
@@ -39,16 +40,18 @@ const ProductList: React.FC<ProductListProps> = ({ products, addToCart }) => {
               </div>
               <div className="text-sm text-gray-500">{product?.description}</div>
             </Link>
-            <button
-              onClick={() => addToCart(product)}
-              className="w-max ring-1 ring-lama text-lama py-2 px-4 text-xs hover:bg-lama hover:text-white"
-            >
-              Thêm vào giỏ
-            </button>
+            {showAddCart && (
+              <button
+                onClick={() => addToCart(product)}
+                className="w-max ring-1 ring-lama text-lama py-2 px-4 text-xs hover:bg-lama hover:text-white"
+              >
+                Thêm vào giỏ
+              </button>
+            )}
           </div>
         ))
       ) : (
-        <div className="w-full text-center text-gray-500 text-lg">Không tìm thấy sản phẩm {":("}</div>
+        <div className="w-full text-center text-gray-500 text-lg">Không tìm thấy sản phẩm {':('}</div>
       )}
     </div>
   );

@@ -166,7 +166,7 @@ const ListPage = () => {
         </div>
       ) : (
         <div className="">
-          <ProductList products={products} addToCart={handleAddToCart} />
+          <ProductList products={products} showAddCart={true} addToCart={handleAddToCart} />
 
           <div className="flex justify-center gap-2 mt-12">
             {/* PREVIOUS BUTTON */}
