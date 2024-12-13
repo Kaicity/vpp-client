@@ -46,7 +46,7 @@ const NavIcons = () => {
       const request = await deleteAllItemCart();
       if (request) {
         fetchCarts();
-        router.push("/list")
+        router.push('/list');
       }
     } catch (error: any) {
       throw new Error(error.message);
@@ -112,20 +112,24 @@ const NavIcons = () => {
         onClick={handleProfile}
         aria-expanded={isProfileOpen ? 'true' : 'false'}
       />
-      {isProfileOpen && (
+      {isProfileOpen && isLoggedIn ? (
         <div
           className="absolute top-12 right-0 p-4 w-max bg-white rounded-lg shadow-lg z-20 transition-transform duration-300 ease-out transform origin-top scale-100"
           role="menu"
         >
-          <Link href="/public" className="block hover:text-lama">
+          <Link href="/" className="block hover:text-lama mb-2">
             <span className="font-semibold">{user ? user.name : 'Khách'}</span>
             <p className="text-sm">{user && user.email}</p>
+          </Link>
+
+          <Link href="/order" className="mt-2 cursor-pointer hover:text-lama">
+            Đơn hàng
           </Link>
           <div onClick={logoutAccount} className="mt-2 cursor-pointer hover:text-lama">
             Đăng xuất
           </div>
         </div>
-      )}
+      ) : null}
 
       {/* Notification Icon */}
       <Image src={Notification} alt="Notifications" width={22} height={22} className="cursor-pointer" />
