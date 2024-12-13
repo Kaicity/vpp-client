@@ -14,23 +14,16 @@ export const getProducts = async (
   filters?: FilterParams,
 ): Promise<ProductPagination> => {
   try {
-    // Xây dựng URL query
-    let query = `/products?pageNumber=${pageNumber}&pageSize=${pageSize}`;
-
-    if (filters?.catalogId) {
-      query += `&catalogId=${encodeURIComponent(filters.catalogId)}`;
-    }
-    if (filters?.minPrice) {
-      query += `&minPrice=${encodeURIComponent(filters.minPrice)}`;
-    }
-    if (filters?.maxPrice) {
-      query += `&maxPrice=${encodeURIComponent(filters.maxPrice)}`;
-    }
-    if (filters?.name) {
-      query += `&name=${encodeURIComponent(filters.name)}`;
-    }
-
-    const response = await instance.get(query);
+    const response = await instance.get('/products', {
+      params: {
+        pageNumber,
+        pageSize,
+        catalogId: filters?.catalogId,
+        minPrice: filters?.minPrice,
+        maxPrice: filters?.maxPrice,
+        name: filters?.name,
+      },
+    });
 
     if (response.data?.isSuccess && response.data.result) {
       return {
@@ -46,7 +39,7 @@ export const getProducts = async (
       throw new Error('Failed to fetch products');
     }
   } catch (error: any) {
-    const errorMessage = error.response?.data?.message;
+    const errorMessage = error.response?.data?.message || 'Unknown error occurred';
     throw new Error(errorMessage);
   }
 };

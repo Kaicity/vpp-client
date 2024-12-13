@@ -55,12 +55,7 @@ const ListPage = () => {
   const fetchProducts = async (pageNumber: number, pageSize: number) => {
     try {
       setLoading(true);
-      const { items, pagination } = await getProducts(pageNumber, pageSize, {
-        catalogId: filters.catalogId,
-        minPrice: filters.minPrice,
-        maxPrice: filters.minPrice,
-        name: filters.name,
-      });
+      const { items, pagination } = await getProducts(pageNumber, pageSize, filters);
       setTimeout(() => {
         if (items && pagination) {
           setProducts(items);

@@ -46,6 +46,7 @@ const NavIcons = () => {
       const request = await deleteAllItemCart();
       if (request) {
         fetchCarts();
+        router.push("/list")
       }
     } catch (error: any) {
       throw new Error(error.message);

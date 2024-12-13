@@ -67,7 +67,6 @@ const ProductDetailPage = () => {
           //Close modal cart và fetch lại cart, quay lại trang sản phẩm mua tiếp ^ ^
           closeCart();
           fetchCarts();
-          router.push('/list');
         }
       } else {
         setMessage(true);
@@ -86,7 +85,10 @@ const ProductDetailPage = () => {
     }, 1500);
   };
 
-  const handleBuyNow = () => {};
+  const handleBuyNow = () => {
+    handleAddItemToCart();
+    router.push('/cart');
+  };
 
   const handleFavorite = () => {};
 

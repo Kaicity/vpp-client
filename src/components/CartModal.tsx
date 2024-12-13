@@ -6,6 +6,7 @@ import { XCircleIcon } from '@heroicons/react/24/solid';
 import { useApp } from '@/context/AppContext';
 import type { Cart } from '@/types/cart';
 import { numericToMoney } from '@/utils/formatMoney';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   carts: Cart[];
@@ -25,6 +26,7 @@ const CartModal: React.FC<Props> = ({
   carts,
 }) => {
   const { closeCart } = useApp();
+  const router = useRouter();
 
   return (
     <div className="w-max absolute p-4 top-12 right-0 text-sm shadow-[0_3px_10px_rgb(0,0,0,0.2)] bg-white flex flex-col gap-6 z-20">
@@ -69,9 +71,9 @@ const CartModal: React.FC<Props> = ({
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Số lượng: {cart?.quantity}</span>
 
-                   <div className='flex items-center gap-1'>
+                    <div className="flex items-center gap-1">
                       <button onClick={() => handleDecrease(cart)}>
-                       <span className='text-gray-500'>
+                        <span className="text-gray-500">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -86,9 +88,9 @@ const CartModal: React.FC<Props> = ({
                               d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                             />
                           </svg>
-                       </span>
+                        </span>
                       </button>
-  
+
                       <button onClick={() => handleIncrease(cart)}>
                         <span className="text-gray-500">
                           <svg
@@ -107,7 +109,7 @@ const CartModal: React.FC<Props> = ({
                           </svg>
                         </span>
                       </button>
-                   </div>
+                    </div>
 
                     <button className="text-lama cursor-pointer" onClick={() => handleRemoveItemCart(cart?.id)}>
                       Xóa
@@ -131,7 +133,15 @@ const CartModal: React.FC<Props> = ({
           </div>
 
           <div className="px-2 flex justify-between text-sm">
-            <button className="py-3 px-4 ring-1 ring-gray-300">Xem giỏ hàng</button>
+            <button
+              className="py-3 px-4 ring-1 ring-gray-300"
+              onClick={() => {
+                router.push('/cart');
+                closeCart();
+              }}
+            >
+              Xem giỏ hàng
+            </button>
             <button className="py-3 px-4 bg-black text-white font-semibold" onClick={handleGoToCheckoutCart}>
               Mua hàng
             </button>

@@ -10,6 +10,9 @@ import type { ItemOrder } from '@/types/order';
 import { createOrder } from '@/api/order';
 import { formatDate } from '@/utils/formatDate';
 import ModalDialog from '@/components/ModalDialog';
+import { PaymentMethod } from '@/enums/paymentMethod';
+import Banking from 'public/banking.png';
+import Cash from 'public/cash.png';
 
 const CheckoutCartPage = () => {
   const { carts, fetchCarts, user } = useApp();
@@ -18,7 +21,7 @@ const CheckoutCartPage = () => {
   // ORDER
   const [formData, setFormData] = useState<ItemOrder>({
     shippingDate: new Date(),
-    paymentMethod: 0,
+    paymentMethod: PaymentMethod.BankTransfer,
     address: '',
   });
 
@@ -26,16 +29,17 @@ const CheckoutCartPage = () => {
   const [message, setMessage] = useState(false);
 
   useEffect(() => {
-    if (carts.length == 0) {
+    // Chỉ kiểm tra khi carts đã được khởi tạo
+    if (carts && carts.length === 0) {
       router.push('/');
     }
-  }, []);
+  }, [carts, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
       ...prevState,
-      [name]: value,
+      [name]: name === 'paymentMethod' ? Number(value) : value,
     }));
   };
 
@@ -47,7 +51,6 @@ const CheckoutCartPage = () => {
         ...formData,
         shippingDate: formatDate(formData.shippingDate),
       };
-      console.log(requestData);
       const request = await createOrder(requestData);
 
       if (request) {
@@ -85,23 +88,48 @@ const CheckoutCartPage = () => {
         </div>
 
         <p className="mt-8 text-lg font-medium">Phương thức thanh toán</p>
-        <form className="mt-5 grid gap-6">
+        <form className="mt-5 grid gap-6" onSubmit={handleSubmit}>
+          {/* Radio 1 */}
           <div className="relative">
-            <input className="peer hidden" id="radio_1" type="radio" name="radio" />
+            <input
+              className="peer hidden"
+              id="radio_1"
+              type="radio"
+              name="paymentMethod"
+              value={PaymentMethod.BankTransfer}
+              checked={formData.paymentMethod === PaymentMethod.BankTransfer}
+              onChange={handleChange}
+            />
             <span className="peer-checked:border-gray-700 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
-            <label className="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-gray-50 flex cursor-pointer select-none rounded-lg border border-gray-300 p-4">
-              <img className="w-14 object-contain" src="/images/naorrAeygcJzX0SyNI4Y0.png" alt="" />
+            <label
+              htmlFor="radio_1"
+              className="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-gray-50 flex cursor-pointer select-none rounded-lg border border-gray-300 p-4"
+            >
+              <Image className="w-14 object-contain" src={Banking} alt="" />
               <div className="ml-5">
-                <span className="mt-2 font-semibold">Chuyển khoảng ngân hàng</span>
+                <span className="mt-2 font-semibold">Chuyển khoản ngân hàng</span>
                 <p className="text-slate-500 text-sm leading-6">Nhận hàng từ: 2-4 ngày</p>
               </div>
             </label>
           </div>
+
+          {/* Radio 2 */}
           <div className="relative">
-            <input className="peer hidden" id="radio_2" type="radio" name="radio" />
+            <input
+              className="peer hidden"
+              id="radio_2"
+              type="radio"
+              name="paymentMethod"
+              value={PaymentMethod.CashOnDelivery}
+              checked={formData.paymentMethod === PaymentMethod.CashOnDelivery}
+              onChange={handleChange}
+            />
             <span className="peer-checked:border-gray-700 absolute right-4 top-1/2 box-content block h-3 w-3 -translate-y-1/2 rounded-full border-8 border-gray-300 bg-white"></span>
-            <label className="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-gray-50 flex cursor-pointer select-none rounded-lg border border-gray-300 p-4">
-              <img className="w-14 object-contain" src="/images/oG8xsl3xsOkwkMsrLGKM4.png" alt="" />
+            <label
+              htmlFor="radio_2"
+              className="peer-checked:border-2 peer-checked:border-gray-700 peer-checked:bg-gray-50 flex cursor-pointer select-none rounded-lg border border-gray-300 p-4"
+            >
+              <Image className="w-14 object-contain" src={Cash} alt="" />
               <div className="ml-5">
                 <span className="mt-2 font-semibold">Tiền mặt</span>
                 <p className="text-slate-500 text-sm leading-6">Nhận hàng từ: 1-2 ngày</p>
@@ -111,7 +139,7 @@ const CheckoutCartPage = () => {
         </form>
       </div>
 
-      <div className="mt-10 bg-gray-50 px-4 pt-8 lg:mt-0">
+      <div className="mt-10 bg-gray-50 h-max py-2 px-4 pt-8 lg:mt-0">
         <form onSubmit={handleSubmit}>
           <p className="text-xl font-medium">Thông tin đơn hàng</p>
           <p className="text-gray-400">Hãy điền đủ thông tin của bạn để tiến hành mua hàng</p>

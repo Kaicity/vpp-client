@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Search from '../../public/search.png';
+import { formatCurrency } from '@/utils/formatMoney';
 
 interface FilterProps {
   catalogs: Catalog[];
@@ -16,9 +17,18 @@ const Filter: React.FC<FilterProps> = ({ catalogs, onFilterChange }) => {
   });
 
   const handleFilterChange = (key: string, value: string) => {
-    const updatedFilters = { ...localFilters, [key]: value };
+    // Loại bỏ các ký tự không phải số
+    const numericValue = value.replace(/[^\d]/g, '');
+
+    // Cập nhật filters
+    const updatedFilters = { ...localFilters, [key]: numericValue };
     setLocalFilters(updatedFilters);
     onFilterChange(updatedFilters);
+  };
+
+  const handleSearchChange = (key: string, value: string) => {
+    const updatedFilters = { ...localFilters, [key]: value };
+    setLocalFilters(updatedFilters);
   };
 
   const handleResetFilters = () => {
@@ -41,7 +51,7 @@ const Filter: React.FC<FilterProps> = ({ catalogs, onFilterChange }) => {
           className="py-2 px-4 text-xs font-medium bg-[#EBEDED]"
           onChange={(e) => handleFilterChange('catalogId', e.target.value)}
         >
-          <option>Loại</option>
+          <option value={''}>Mặc định</option>
           {catalogs.map((catalog) => (
             <option value={catalog.id} key={catalog.id}>
               {catalog.name}
@@ -51,29 +61,33 @@ const Filter: React.FC<FilterProps> = ({ catalogs, onFilterChange }) => {
 
         <input
           type="text"
-          name="min"
+          name="minPrice"
           placeholder="Giá thấp từ"
           className="text-xs pl-2 ring-1 ring-gray-400 h-6 sm:h-auto"
+          value={formatCurrency(localFilters.minPrice)}
+          onChange={(e) => handleFilterChange('minPrice', e.target.value)}
         />
 
         <input
           type="text"
-          name="max"
+          name="maxPrice"
           placeholder="Giá cao từ"
           className="text-xs pl-2 ring-1 ring-gray-400 h-6 sm:h-auto"
+          value={formatCurrency(localFilters.maxPrice)}
+          onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
         />
 
         <form className="flex ic justify-between gap-4 bg-gray-100 p-2 rounded-md flex-1" onSubmit={handleSearchSubmit}>
           <input
             type="text"
             name="name"
-            placeholder="Tìm kiếm..."
-            className="flex-1 bg-transparent outline-none"
+            placeholder="Tìm kiếm tên sản phẩm..."
+            className="flex-1 bg-transparent outline-none tx-sm"
             value={localFilters.name}
-            onChange={(e) => handleFilterChange('name', e.target.value)}
+            onChange={(e) => handleSearchChange('name', e.target.value)}
           />
-          <button type="submit" className="cursor-pointer">
-            <Image src={Search} alt="" width={16} height={16}></Image>
+          <button type="submit" className="cursor-pointer rounded-full px-1 hover:bg-slate-300">
+            <Image src={Search} alt="" width={16} height={16} className='object-cover'></Image>
           </button>
         </form>
 
