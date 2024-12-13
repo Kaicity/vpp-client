@@ -40,7 +40,7 @@ const Add: React.FC<Props> = ({ handleAddItemToCart, handleBuyNow, hanldeFavorit
         </div>
 
         <div className="text-xs">
-          Chỉ<span className="text-orange-500">4 món hàng</span> đã chọn!
+          Chỉ <span className="text-orange-500">4 món hàng</span> đã chọn!
           <br /> {'Đừng'} bỏ lỡ
         </div>
       </div>

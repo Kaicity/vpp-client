@@ -71,7 +71,7 @@ const CartModal: React.FC<Props> = ({
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Số lượng: {cart?.quantity}</span>
 
-                    <div className="flex items-center gap-1">
+                    {/* <div className="flex items-center gap-1">
                       <button onClick={() => handleDecrease(cart)}>
                         <span className="text-gray-500">
                           <svg
@@ -109,7 +109,7 @@ const CartModal: React.FC<Props> = ({
                           </svg>
                         </span>
                       </button>
-                    </div>
+                    </div> */}
 
                     <button className="text-lama cursor-pointer" onClick={() => handleRemoveItemCart(cart?.id)}>
                       Xóa

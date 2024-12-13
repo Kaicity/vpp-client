@@ -36,24 +36,26 @@ const OrderDetail = () => {
       <div className="px-4 pt-8">
         <p className="text-xl font-medium">Chi tiết đơn hàng</p>
         <div className="mt-8 space-y-3 rounded-lg border bg-white px-2 py-4 sm:px-6">
-          {carts.map((cart) => (
-            <div key={cart?.id} className="flex flex-col rounded-lg bg-white sm:flex-row">
-              <Image
-                width={72}
-                height={96}
-                className="m-2 h-24 w-28  border object-cover object-center"
-                src={cart?.imageUrl || ProductDefault}
-                alt=""
-              />
-              <div className="flex w-full flex-col px-4 py-4">
-                <span className="font-semibold">{cart?.name}</span>
-                <span className="float-right text-gray-400">
-                  {numericToMoney(cart?.price!)} / số lượng: {cart?.quantity}
-                </span>
-                <p className="text-lg font-bold">{numericToMoney(cart?.price! * cart?.quantity)}</p>
+          <div className="divide-y">
+            {carts.map((cart) => (
+              <div key={cart?.id} className="flex flex-col rounded-lg bg-white sm:flex-row">
+                <Image
+                  width={72}
+                  height={96}
+                  className="m-2 h-24 w-28  border object-cover object-center"
+                  src={cart?.imageUrl || ProductDefault}
+                  alt=""
+                />
+                <div className="flex w-full flex-col px-4 py-4">
+                  <span className="font-semibold">{cart?.name}</span>
+                  <span className="float-right text-gray-400">
+                    {numericToMoney(cart?.price!)} / số lượng: {cart?.quantity}
+                  </span>
+                  <p className="text-lg font-bold">{numericToMoney(cart?.price! * cart?.quantity)}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 

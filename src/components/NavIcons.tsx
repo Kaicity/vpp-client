@@ -71,8 +71,6 @@ const NavIcons = () => {
         quantity: cart?.quantity - 1,
       };
 
-      console.log(itemCart);
-
       const request = await updateItemCartById(itemCart);
       if (request) {
         fetchCarts();
@@ -88,8 +86,6 @@ const NavIcons = () => {
         productId: cart?.id,
         quantity: cart?.quantity + 1,
       };
-
-      console.log(itemCart);
 
       const request = await updateItemCartById(itemCart);
       if (request) {

@@ -6,10 +6,44 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import ProductDefault from 'public/product_default.webp';
 import CartNull from 'public/cart_null.webp';
+import type { Cart, ItemCart } from '@/types/cart';
+import { updateItemCartById } from '@/api/cart';
 
 const Cart = () => {
-  const { carts, fetchCarts, user } = useApp();
+  const { carts, fetchCarts } = useApp();
   const router = useRouter();
+
+  const handleDecrease = async (cart: Cart) => {
+    try {
+      const itemCart: ItemCart = {
+        productId: cart?.id,
+        quantity: cart?.quantity - 1,
+      };
+
+      const request = await updateItemCartById(itemCart);
+      if (request) {
+        fetchCarts();
+      }
+    } catch (error: any) {
+      throw new Error(error?.message);
+    }
+  };
+
+  const handleIncrease = async (cart: Cart) => {
+    try {
+      const itemCart: ItemCart = {
+        productId: cart?.id,
+        quantity: cart?.quantity + 1,
+      };
+
+      const request = await updateItemCartById(itemCart);
+      if (request) {
+        fetchCarts();
+      }
+    } catch (error: any) {
+      throw new Error(error?.message);
+    }
+  };
 
   return (
     <div className="px-4 md:px-8 lg:px-6 xl:32 2xl:px-32 relative mt-12">
@@ -35,6 +69,46 @@ const Cart = () => {
                     </span>
                     <p className="text-md">{numericToMoney(cart?.price! * cart?.quantity)}</p>
                   </div>
+
+                  <div className="flex items-center gap-1">
+                    <button onClick={() => handleDecrease(cart)}>
+                      <span className="text-gray-500">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="size-8"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                          />
+                        </svg>
+                      </span>
+                    </button>
+
+                    <button onClick={() => handleIncrease(cart)}>
+                      <span className="text-gray-500">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="size-8"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                          />
+                        </svg>
+                      </span>
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -48,7 +122,7 @@ const Cart = () => {
 
                 <button
                   onClick={() => router.push('/list')}
-                  className="w-max py-2 px-4 ring-gray-300 ring-1 text-black text-sm  m-auto"
+                  className="w-max py-2 px-4 ring-gray-300 ring-1 text-black text-sm m-auto"
                 >
                   <div className="flex items-center gap-1">
                     <svg
@@ -78,7 +152,7 @@ const Cart = () => {
         <div className="w-full lg:w-1/3 h-max rounded-lg border bg-white p-6">
           <div className="flex flex-col justify-between h-56">
             <div className="">
-              <h2 className="text-lg font-semibold mb-4">Thông tin đơn hàng</h2>
+              <h2 className="text-lg font-semibold mb-4">Tạm tính</h2>
               <div className="flex justify-between items-center mb-2">
                 <span className="text-base">Tổng tiền:</span>
                 <span className="text-lg font-bold text-black">
