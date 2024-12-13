@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 
 interface Props {
   title: string;
@@ -13,6 +12,7 @@ interface Props {
   handlePrev: () => void;
   open: boolean; // Nhận open dưới dạng props
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  icon: React.ReactElement;
 }
 
 const ModalDialog: React.FC<Props> = ({
@@ -24,6 +24,7 @@ const ModalDialog: React.FC<Props> = ({
   handlePrev,
   open,
   setOpen,
+  icon,
 }) => {
   return (
     <Dialog open={open} onClose={() => setOpen(false)} className="relative z-10">
@@ -40,8 +41,8 @@ const ModalDialog: React.FC<Props> = ({
           >
             <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
               <div className="sm:flex sm:items-start">
-                <div className="mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:size-10">
-                  <ExclamationTriangleIcon aria-hidden="true" className="size-6 text-red-600" />
+                <div className="mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-gray-100 sm:mx-0 sm:size-10">
+                  {icon}
                 </div>
                 <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                   <DialogTitle as="h3" className="text-base font-semibold text-gray-900">
@@ -57,7 +58,7 @@ const ModalDialog: React.FC<Props> = ({
               <button
                 type="button"
                 onClick={handleMain}
-                className="inline-flex w-full justify-center rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+                className="inline-flex w-full justify-center rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm sm:ml-3 sm:w-auto"
               >
                 {titleButtonMain}
               </button>

@@ -3,7 +3,7 @@
 import { useApp } from '@/context/AppContext';
 import { numericToMoney } from '@/utils/formatMoney';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ProductDefault from 'public/product_default.webp';
 import Image from 'next/image';
 import type { ItemOrder } from '@/types/order';
@@ -13,6 +13,7 @@ import ModalDialog from '@/components/ModalDialog';
 import { PaymentMethod } from '@/enums/paymentMethod';
 import Banking from 'public/banking.png';
 import Cash from 'public/cash.png';
+import { CheckCircleIcon } from '@heroicons/react/24/outline';
 
 const CheckoutCartPage = () => {
   const { carts, fetchCarts, user } = useApp();
@@ -334,12 +335,16 @@ const CheckoutCartPage = () => {
         <ModalDialog
           title="Thông báo"
           content="Đặt hàng thành công"
-          handleMain={() => router.push('/list')}
-          handlePrev={() => router.push('/')}
+          handleMain={() => (window.location.href = '/list')}
+          handlePrev={() => (window.location.href = '/')}
           titleButtonMain="Tiếp tục mua hàng"
           titleButtonPrev="Về trang chủ"
           open={message}
           setOpen={setMessage}
+          icon={React.createElement(CheckCircleIcon, {
+            'aria-hidden': 'true',
+            className: 'size-6 text-green-500',
+          })}
         />
       )}
     </div>

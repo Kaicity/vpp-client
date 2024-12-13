@@ -4,7 +4,7 @@ import Image from 'next/image';
 import BannerProduct from '../../../public/bannerProduct.png';
 import Filter from '@/components/Filtrer';
 import ProductList from '@/components/ProductList';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Product } from '@/types/product';
 import { getProducts } from '@/api/product';
 import Spinner from '@/components/Spinner';
@@ -15,9 +15,10 @@ import { getCatalogs } from '@/api/catalog';
 import Toast from '@/components/Toast';
 import { ItemCart } from '@/types/cart';
 import { createCart } from '@/api/cart';
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+
 const ListPage = () => {
   const { isLoggedIn, closeCart, fetchCarts } = useApp();
-
   const router = useRouter();
 
   // PRODUCTS
@@ -215,6 +216,10 @@ const ListPage = () => {
           titleButtonPrev="Để sau"
           open={message}
           setOpen={setMessage}
+          icon={React.createElement(ExclamationTriangleIcon, {
+            'aria-hidden': 'true',
+            className: 'size-6 text-red-600',
+          })}
         />
       )}
       {/* TOAST MESSAGE */}

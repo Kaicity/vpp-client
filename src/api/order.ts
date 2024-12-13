@@ -1,4 +1,4 @@
-import type { ItemOrder, Order } from '@/types/order';
+import type { ItemOrder, Order, OrderPagination } from '@/types/order';
 import { instance } from '.';
 import type { OrderDetail } from '@/types/orderDetail';
 
@@ -37,22 +37,31 @@ export const cancelOrder = async (trackingNumber: string): Promise<boolean> => {
   }
 };
 
-export const getOrders = async (pageNumber: number, pageSize: number, filters: FilterParams): Promise<Order[]> => {
+export const getOrders = async (
+  pageNumber: number,
+  pageSize: number,
+  filters: FilterParams,
+): Promise<OrderPagination> => {
   try {
-    // Xây dựng URL query
-    let query = `order/user-orders?pageNumber=${pageNumber}&pageSize=${pageSize}`;
-
-    if (filters?.trackingNumber) {
-      query += `&trackingNumber=${encodeURIComponent(filters.trackingNumber)}`;
-    }
-    if (filters?.sortBy) {
-      query += `&sortBy=${encodeURIComponent(filters.sortBy)}`;
-    }
-
-    const response = await instance.get(query);
+    const response = await instance.get(`order/user-orders`, {
+      params: {
+        pageNumber,
+        pageSize,
+        trackingNumber: filters.trackingNumber,
+        sortBy: filters.sortBy,
+      },
+    });
 
     if (response.data?.isSuccess && response.data.result) {
-      return response.data.result.items;
+      return {
+        items: response.data.result.items,
+        pagination: {
+          pageNumber: response.data.result.pageNumber,
+          pageSize: response.data.result.pageSize,
+          totalItems: response.data.result.totalItems,
+          totalPages: response.data.result.totalPages,
+        },
+      };
     } else {
       throw new Error('Failed to fetch orders');
     }
