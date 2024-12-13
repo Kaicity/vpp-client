@@ -3,7 +3,7 @@
 import { useParams, useRouter } from 'next/navigation';
 import Add from '@/components/Add';
 import ProductImage from '@/components/ProductImages';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { Product } from '@/types/product';
 import { getProductById } from '@/api/product';
 import { numericToMoney } from '@/utils/formatMoney';
@@ -12,6 +12,7 @@ import { createCart } from '@/api/cart';
 import type { ItemCart } from '@/types/cart';
 import ModalDialog from '@/components/ModalDialog';
 import Toast from '@/components/Toast';
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 
 const ProductDetailPage = () => {
   const router = useRouter();
@@ -87,7 +88,9 @@ const ProductDetailPage = () => {
 
   const handleBuyNow = () => {
     handleAddItemToCart();
-    router.push('/cart');
+    if (isLoggedIn) {
+      router.push('/cart');
+    }
   };
 
   const handleFavorite = () => {};
@@ -156,6 +159,10 @@ const ProductDetailPage = () => {
           titleButtonPrev="Để sau"
           open={message}
           setOpen={setMessage}
+          icon={React.createElement(ExclamationTriangleIcon, {
+            'aria-hidden': 'true',
+            className: 'size-6 text-red-600',
+          })}
         />
       )}
 

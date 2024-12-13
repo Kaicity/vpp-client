@@ -71,12 +71,12 @@ export const getOrders = async (
   }
 };
 
-export const getOrderDetail = async (trackingNumber: string): Promise<boolean> => {
+export const getOrderDetail = async (trackingNumber: string): Promise<OrderDetail> => {
   try {
     const response = await instance.get(`order/details/${trackingNumber}`);
 
-    if (response.data?.isSuccess) {
-      return response?.data?.isSuccess;
+    if (response.data?.isSuccess && response.data.result) {
+      return response?.data?.result;
     } else {
       throw new Error('Failed to request get order detail');
     }

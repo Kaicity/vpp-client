@@ -56,7 +56,7 @@ const Add: React.FC<Props> = ({ handleAddItemToCart, handleBuyNow, hanldeFavorit
           className="w-44 text-sm ring-1 text-white bg-lama py-2 px-4 hover:shadow-md disabled:cursor-not-allowed disabled:bg-pink-200 disabled:text-white"
           onClick={handleAddItemToCart}
         >
-          Thêm vào giỏ hàng
+          Thêm vào giỏ
         </button>
         <button className="flex items-center gap-2 text-sm text-gray-500" onClick={hanldeFavorite}>
           <svg viewBox="0 0 477.53 477.53" height="24" width="24">

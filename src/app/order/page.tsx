@@ -14,6 +14,7 @@ import Search from 'public/search.png';
 import React, { useEffect, useState } from 'react';
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
 import Toast from '@/components/Toast';
+import Link from 'next/link';
 
 const Order = () => {
   const { isLoggedIn, closeCart, fetchCarts } = useApp();
@@ -248,12 +249,12 @@ const Order = () => {
                     >
                       Hủy đơn hàng
                     </button>
-                    <a
-                      href="#"
+                    <Link
+                      href={`/order-detail/${order?.trackingNumber}`}
                       className="w-full inline-flex justify-center border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 lg:w-auto"
                     >
                       Xem chi tiết
-                    </a>
+                    </Link>
                   </div>
                 </div>
               ))}

@@ -65,7 +65,7 @@ const CheckoutCartPage = () => {
   return (
     <div className="grid sm:px-10 lg:grid-cols-2 lg:px-20 xl:px-32 mt-12">
       <div className="px-4 pt-8">
-        <p className="text-xl font-medium">Chi tiết đơn hàng</p>
+        <p className="text-xl font-medium">Giỏ hàng</p>
         <p className="text-gray-400">Vui lòng kiểm tra kỹ và chọn phương thức thanh toán chính xác</p>
         <div className="mt-8 space-y-3 rounded-lg border bg-white px-2 py-4 sm:px-6">
           {carts.map((cart) => (
@@ -314,17 +314,20 @@ const CheckoutCartPage = () => {
               </div>
               <div className="flex items-center justify-between">
                 <p className="text-sm font-medium text-gray-900">Phí vận chuyển</p>
-                <p className="font-semibold text-gray-900">{numericToMoney(45000)}</p>
+                <p className="font-semibold text-gray-900">{numericToMoney(0)}</p>
               </div>
             </div>
             <div className="mt-6 flex items-center justify-between">
               <p className="text-sm font-medium text-gray-900">Tổng cộng</p>
               <p className="text-2xl font-semibold text-gray-900">
-                {numericToMoney(carts.reduce((total, item) => total + item?.price * item?.quantity, 0) + 45000)}
+                {numericToMoney(carts.reduce((total, item) => total + item?.price * item?.quantity, 0))}
               </p>
             </div>
           </div>
-          <button type="submit" className="mt-4 mb-8 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white">
+          <button
+            type="submit"
+            className="mt-4 mb-8 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white hover:bg-slate-800 transition"
+          >
             Đặt hàng
           </button>
         </form>
