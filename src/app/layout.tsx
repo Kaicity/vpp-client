@@ -11,7 +11,7 @@ import ScrollToTop from '@/components/ScrollToTop';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'VPP Ecommerce',
+  title: 'VPP-Client',
   description: 'Hệ thống bán hàng thương mại điện tử bởi Thongular',
 };
 
