@@ -133,7 +133,7 @@ const HomePage = () => {
 
       <div className="mt-12 px-4 md:px-8 lg:px-6 xl:px-32">
         <h2 className="text-2xl font-semibold mb-6">Khám phá các chủ đề</h2>
-        <div className="flex overflow-x-auto gap-4">
+        <div className="flex overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 gap-4">
           {banners.map((banner, index) => (
             <div key={index} className="min-w-[300px] md:min-w-[400px] rounded-lg overflow-hidden shadow-md">
               <Image src={banner.img} alt={banner.alt} width={400} height={250} className="object-cover" />
