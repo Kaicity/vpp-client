@@ -12,47 +12,51 @@ interface ProductListProps {
 }
 
 const ProductList: React.FC<ProductListProps> = ({ products, addToCart, showAddCart }) => {
+  // Tính số cột dựa trên màn hình
+  const columns = 4; // Mặc định 4 cột, có thể thay đổi tùy vào thiết kế
+  const placeholderCount = (columns - (products.length % columns)) % columns;
+  const placeholders = Array.from({ length: placeholderCount });
+
   return (
     <div className="mt-12 flex gap-x-8 gap-y-16 justify-between flex-wrap">
-      {products.length > 0 ? (
-        products.map((product) => (
-          <div key={product.id} className="w-full flex flex-col gap-4 sm:w-[45%] lg:w-[22%]">
-            <Link href={`/product/${product.id}`} className="block">
-              <div className="relative w-full h-80">
-                <Image
-                  src={product?.imageUrl1 || ProductDefault}
-                  alt=""
-                  fill
-                  sizes="25vw"
-                  className="absolute object-cover z-10 hover:opacity-0 transition-opacity easy duration-500"
-                />
-                <Image
-                  src={product?.imageUrl2 || ProductDefault}
-                  alt=""
-                  fill
-                  sizes="25vw"
-                  className="absolute object-cover"
-                />
-              </div>
-              <div className="flex justify-between mt-4">
-                <span className="font-medium">{product?.name}</span>
-                <span className="font-medium">{product?.price.toLocaleString()} đ</span>
-              </div>
-              <div className="text-sm text-gray-500">{product?.description}</div>
-            </Link>
-            {showAddCart && (
-              <button
-                onClick={() => addToCart(product)}
-                className="w-max ring-1 ring-lama text-lama py-2 px-4 text-xs hover:bg-lama hover:text-white"
-              >
-                Thêm vào giỏ
-              </button>
-            )}
-          </div>
-        ))
-      ) : (
-        <div className="w-full text-center text-gray-500 text-lg">Không tìm thấy sản phẩm {':('}</div>
-      )}
+      {products.map((product) => (
+        <div key={product.id} className="w-full flex flex-col gap-4 sm:w-[45%] lg:w-[22%]">
+          <Link href={`/product/${product.id}`} className="block">
+            <div className="relative w-full h-80">
+              <Image
+                src={product?.imageUrl1 || ProductDefault}
+                alt=""
+                fill
+                sizes="25vw"
+                className="absolute object-cover z-10 hover:opacity-0 transition-opacity ease duration-500"
+              />
+              <Image
+                src={product?.imageUrl2 || ProductDefault}
+                alt=""
+                fill
+                sizes="25vw"
+                className="absolute object-cover"
+              />
+            </div>
+            <div className="flex justify-between mt-4">
+              <span className="font-medium">{product?.name}</span>
+              <span className="font-medium">{product?.price.toLocaleString()} đ</span>
+            </div>
+            <div className="text-sm text-gray-500">{product?.description}</div>
+          </Link>
+          {showAddCart && (
+            <button
+              onClick={() => addToCart(product)}
+              className="w-max ring-1 ring-lama text-lama py-2 px-4 text-xs hover:bg-lama hover:text-white"
+            >
+              Thêm vào giỏ
+            </button>
+          )}
+        </div>
+      ))}
+      {placeholders.map((_, index) => (
+        <div key={`placeholder-${index}`} className="w-full sm:w-[45%] lg:w-[22%] invisible" />
+      ))}
     </div>
   );
 };
