@@ -7,9 +7,10 @@ interface Props {
   handleBuyNow: () => void;
   hanldeFavorite: () => void;
   onQuantityChange: (quantity: number) => void;
+  isBlockBuy: boolean;
 }
 
-const Add: React.FC<Props> = ({ handleAddItemToCart, handleBuyNow, hanldeFavorite, onQuantityChange }) => {
+const Add: React.FC<Props> = ({ handleAddItemToCart, handleBuyNow, hanldeFavorite, onQuantityChange, isBlockBuy }) => {
   const [quantity, setQuantity] = useState(1);
 
   function handleQuantity(type: 'i' | 'd'): void {
@@ -47,12 +48,14 @@ const Add: React.FC<Props> = ({ handleAddItemToCart, handleBuyNow, hanldeFavorit
 
       <div className="flex items-center gap-4">
         <button
+          disabled={isBlockBuy}
           className="w-44 text-sm ring-1 ring-lama text-lama py-2 px-4 hover:bg-lama hover:text-white disabled:cursor-not-allowed disabled:bg-pink-200 disabled:text-white disabled:ring-none"
           onClick={handleBuyNow}
         >
           Mua ngay
         </button>
         <button
+          disabled={isBlockBuy}
           className="w-44 text-sm ring-1 text-white bg-lama py-2 px-4 hover:shadow-md disabled:cursor-not-allowed disabled:bg-pink-200 disabled:text-white"
           onClick={handleAddItemToCart}
         >

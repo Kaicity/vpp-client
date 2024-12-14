@@ -147,6 +147,7 @@ const ProductDetailPage = () => {
           handleBuyNow={handleBuyNow}
           hanldeFavorite={handleFavorite}
           onQuantityChange={handleQuantityChange}
+          isBlockBuy={product?.stock == 0}
         />
 
         <div className="h-[2px] bg-gray-100"></div>
