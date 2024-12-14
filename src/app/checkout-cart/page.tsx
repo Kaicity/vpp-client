@@ -58,7 +58,7 @@ const CheckoutCartPage = () => {
         setMessage(true);
       }
     } catch (error: any) {
-      throw new Error(error.message);
+      console.error(error);
     }
   };
 

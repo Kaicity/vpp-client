@@ -6,7 +6,7 @@ import Filter from '@/components/Filtrer';
 import ProductList from '@/components/ProductList';
 import React, { useEffect, useState } from 'react';
 import { Product } from '@/types/product';
-import { getProducts } from '@/api/product';
+import { getProductById, getProducts } from '@/api/product';
 import Spinner from '@/components/Spinner';
 import { useApp } from '@/context/AppContext';
 import ModalDialog from '@/components/ModalDialog';
@@ -18,11 +18,12 @@ import { createCart } from '@/api/cart';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 
 const ListPage = () => {
-  const { isLoggedIn, closeCart, fetchCarts } = useApp();
+  const { isLoggedIn, closeCart, fetchCarts, carts } = useApp();
   const router = useRouter();
 
   // PRODUCTS
   const [products, setProducts] = useState<Product[]>([]);
+  const [product, setProduct] = useState<Product | null>(null);
   const [pagination, setPagination] = useState({
     pageNumber: 1,
     pageSize: 24,
@@ -45,7 +46,6 @@ const ListPage = () => {
 
   //MESSAGE RESPONSE
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState(false);
 
   useEffect(() => {
@@ -65,7 +65,7 @@ const ListPage = () => {
         setLoading(false);
       }, 500);
     } catch (error: any) {
-      setError(error.message);
+      console.error(error.message);
     }
   };
 
@@ -76,26 +76,35 @@ const ListPage = () => {
         setCatalogs(data);
       }
     } catch (error: any) {
-      setError(error.message);
+      console.error(error.message);
     }
   };
 
   const handleAddToCart = async (product: Product) => {
     try {
       if (isLoggedIn) {
+        const productData = await getProductById(product?.id);
+
         const itemCart: ItemCart = {
           productId: product?.id,
           quantity: 1,
         };
 
-        const request = await createCart(itemCart);
-        if (request) {
-          showMessageToast();
-          setContentMessage('Đã thêm vào giỏ hàng');
+        // Kiểm tra nếu sản phẩm đã có trong giỏ hàng
+        const cartItem = carts.find((cart) => cart?.id === productData?.id);
 
-          //Close modal cart và fetch lại cart
-          closeCart();
-          fetchCarts();
+        if (cartItem && cartItem.quantity + itemCart.quantity > productData?.stock) {
+          alert('Sản phẩm bạn chọn vượt quá số lượng hiện có');
+        } else {
+          const request = await createCart(itemCart);
+          if (request) {
+            showMessageToast();
+            setContentMessage('Đã thêm vào giỏ hàng');
+
+            //Close modal cart và fetch lại cart
+            closeCart();
+            fetchCarts();
+          }
         }
       } else {
         setMessage(true);
@@ -103,7 +112,7 @@ const ListPage = () => {
     } catch (error: any) {
       showMessageToast();
       setContentMessage(error?.message);
-      throw new Error(error);
+      console.error(error.message);
     }
   };
 

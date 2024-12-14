@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { clearAll, getToken, getUser, saveToken, saveUser } from '@/utils/localstorage';
+import { clearAll, getToken, getUser, saveToken } from '@/utils/localstorage';
 import type { User } from '@/types/user';
 import { getCarts } from '@/api/cart';
 import type { Cart } from '@/types/cart';

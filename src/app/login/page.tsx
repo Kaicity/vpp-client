@@ -1,16 +1,13 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { saveToken, saveUser } from '@/utils/localstorage';
+import { saveUser } from '@/utils/localstorage';
 import { getUserInfo, login } from '@/api/auth';
 import type { Account } from '@/types/account';
 import { useApp } from '@/context/AppContext';
 
 const LoginPage: React.FC = () => {
   const { handleLogin } = useApp();
-
-  const router = useRouter();
 
   const [formData, setFormData] = useState<Account>({
     email: '',

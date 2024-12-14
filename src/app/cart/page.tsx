@@ -8,6 +8,7 @@ import ProductDefault from 'public/product_default.webp';
 import CartNull from 'public/cart_null.webp';
 import type { Cart, ItemCart } from '@/types/cart';
 import { updateItemCartById } from '@/api/cart';
+import { getProductById } from '@/api/product';
 
 const Cart = () => {
   const { carts, fetchCarts } = useApp();
@@ -25,23 +26,32 @@ const Cart = () => {
         fetchCarts();
       }
     } catch (error: any) {
-      throw new Error(error?.message);
+      console.error(error.message);
     }
   };
 
   const handleIncrease = async (cart: Cart) => {
     try {
+      const productData = await getProductById(cart?.id);
+
       const itemCart: ItemCart = {
         productId: cart?.id,
         quantity: cart?.quantity + 1,
       };
 
-      const request = await updateItemCartById(itemCart);
-      if (request) {
-        fetchCarts();
+      // Kiểm tra nếu sản phẩm đã có trong giỏ hàng
+      const cartItem = carts.find((cart) => cart?.id === productData?.id);
+
+      if (cartItem && itemCart.quantity > productData?.stock) {
+        alert('Sản phẩm không thể tăng thêm vì vượt quá số lượng hiện có');
+      } else {
+        const request = await updateItemCartById(itemCart);
+        if (request) {
+          fetchCarts();
+        }
       }
     } catch (error: any) {
-      throw new Error(error?.message);
+      console.error(error.message);
     }
   };
 

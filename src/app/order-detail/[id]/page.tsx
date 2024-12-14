@@ -24,7 +24,7 @@ const OrderDetail = () => {
         setOrderDetail(data);
         setCarts(data?.orderDetails);
       } catch (error: any) {
-        throw new Error(error.message);
+        console.error(error.message);
       }
     };
 

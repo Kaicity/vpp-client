@@ -44,7 +44,7 @@ export const getProducts = async (
   }
 };
 
-export const getProductById = async (id: string): Promise<Product> => {
+export const getProductById = async (id: number): Promise<Product> => {
   try {
     const response = await instance.get(`/products/${id}`);
 

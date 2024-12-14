@@ -17,7 +17,7 @@ import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 const ProductDetailPage = () => {
   const router = useRouter();
 
-  const { isLoggedIn, fetchCarts, closeCart } = useApp();
+  const { isLoggedIn, fetchCarts, closeCart, carts } = useApp();
   const { id } = useParams<{ id: string }>();
 
   // PRODUCT
@@ -30,18 +30,17 @@ const ProductDetailPage = () => {
 
   // MESSAGE
   const [message, setMessage] = useState(false);
-
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchProductById = async () => {
       try {
         setLoading(true);
-        const data = await getProductById(id);
+        const data = await getProductById(Number(id));
         setProduct(data);
         setLoading(false);
       } catch (error: any) {
-        throw new Error(error.message);
+        console.error(error.message);
       }
     };
 
@@ -55,19 +54,28 @@ const ProductDetailPage = () => {
   const handleAddItemToCart = async () => {
     try {
       if (isLoggedIn) {
+        const productData = await getProductById(product?.id!);
+
         const itemCart: ItemCart = {
           productId: product!.id,
           quantity: quantity,
         };
 
-        const request = await createCart(itemCart);
-        if (request) {
-          showMessageToast();
-          setContentMessage('Đã thêm vào giỏ hàng');
+        // Kiểm tra nếu sản phẩm đã có trong giỏ hàng
+        const cartItem = carts.find((cart) => cart?.id === productData?.id);
 
-          //Close modal cart và fetch lại cart, quay lại trang sản phẩm mua tiếp ^ ^
-          closeCart();
-          fetchCarts();
+        if (cartItem && cartItem.quantity + itemCart.quantity > productData?.stock) {
+          alert('Sản phẩm bạn chọn vượt quá số lượng hiện có');
+        } else {
+          const request = await createCart(itemCart);
+          if (request) {
+            showMessageToast();
+            setContentMessage('Đã thêm vào giỏ hàng');
+
+            //Close modal cart và fetch lại cart, quay lại trang sản phẩm mua tiếp ^ ^
+            closeCart();
+            fetchCarts();
+          }
         }
       } else {
         setMessage(true);
@@ -75,7 +83,7 @@ const ProductDetailPage = () => {
     } catch (error: any) {
       showMessageToast();
       setContentMessage(error?.message);
-      throw new Error(error);
+      console.error(error.message);
     }
   };
 
@@ -125,6 +133,7 @@ const ProductDetailPage = () => {
           Hãy để quyển nhật ký này trở thành người bạn lưu giữ mọi cảm xúc, ý tưởng và kế hoạch của bạn. Với thiết kế
           tinh tế, bìa cứng sang trọng hoặc bìa da mềm mại, sản phẩm mang lại cảm giác chắc chắn và dễ chịu khi sử dụng
         </p>
+        <p className="text-black">Số lượng: {product?.stock}</p>
         <div className="h-[2px] bg-gray-100"></div>
         <div className="flex items-center gap-4">
           <h3 className="text-xl text-gray-500 line-through">{numericToMoney(product?.price! + 100000)}đ</h3>

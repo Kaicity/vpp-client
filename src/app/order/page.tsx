@@ -40,7 +40,6 @@ const Order = () => {
 
   //MESSAGE RESPONSE
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState(false);
 
   useEffect(() => {
@@ -59,7 +58,7 @@ const Order = () => {
         setLoading(false);
       }, 500);
     } catch (error: any) {
-      setError(error.message);
+      console.error(error.message);
     }
   };
 
@@ -114,7 +113,7 @@ const Order = () => {
       showMessageToast();
       setMessage(false);
       setContentMessage(error?.message);
-      throw new Error(error.message);
+      console.error(error.message);
     }
   };
 
