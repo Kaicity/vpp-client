@@ -13,16 +13,12 @@ interface Props {
   handleRemoveItemCart: (id: number) => void;
   handleRemoveAllItemCart: () => void;
   handleGoToCheckoutCart: () => void;
-  handleDecrease: (cart: Cart) => void;
-  handleIncrease: (cart: Cart) => void;
 }
 
 const CartModal: React.FC<Props> = ({
   handleGoToCheckoutCart,
   handleRemoveAllItemCart,
   handleRemoveItemCart,
-  handleDecrease,
-  handleIncrease,
   carts,
 }) => {
   const { closeCart } = useApp();

@@ -64,38 +64,6 @@ const NavIcons = () => {
     }
   };
 
-  const handleDecrease = async (cart: Cart) => {
-    try {
-      const itemCart: ItemCart = {
-        productId: cart?.id,
-        quantity: cart?.quantity - 1,
-      };
-
-      const request = await updateItemCartById(itemCart);
-      if (request) {
-        fetchCarts();
-      }
-    } catch (error: any) {
-      throw new Error(error?.message);
-    }
-  };
-
-  const handleIncrease = async (cart: Cart) => {
-    try {
-      const itemCart: ItemCart = {
-        productId: cart?.id,
-        quantity: cart?.quantity + 1,
-      };
-
-      const request = await updateItemCartById(itemCart);
-      if (request) {
-        fetchCarts();
-      }
-    } catch (error: any) {
-      throw new Error(error?.message);
-    }
-  };
-
   return (
     <div className="flex items-center gap-4 xl:gap-6 relative">
       {/* Profile Icon */}
@@ -143,8 +111,6 @@ const NavIcons = () => {
           carts={carts}
           handleRemoveItemCart={handleDeleteItemCartById}
           handleRemoveAllItemCart={handleDeleteAllItemCarts}
-          handleDecrease={handleDecrease}
-          handleIncrease={handleIncrease}
         />
       )}
     </div>

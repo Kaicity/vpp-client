@@ -6,22 +6,33 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import ProductDefault from 'public/product_default.webp';
 import CartNull from 'public/cart_null.webp';
-import type { Cart, ItemCart } from '@/types/cart';
-import { updateItemCartById } from '@/api/cart';
-import { getProductById } from '@/api/product';
+import type { Cart } from '@/types/cart';
+import { deleteAllItemCart, deleteItemCartById, updateItemCartById } from '@/api/cart';
+import { useEffect, useState } from 'react';
 
 const Cart = () => {
   const { carts, fetchCarts } = useApp();
+  const [localCarts, setLocalCarts] = useState(carts);
   const router = useRouter();
 
-  const handleDecrease = async (cart: Cart) => {
-    try {
-      const itemCart: ItemCart = {
-        productId: cart?.id,
-        quantity: cart?.quantity - 1,
-      };
+  useEffect(() => {
+    // Đồng bộ hóa localCarts với carts từ context khi context cập nhật
+    setLocalCarts(carts);
+  }, [carts]);
 
-      const request = await updateItemCartById(itemCart);
+  const handleDecrease = (cartId: number) => {
+    setLocalCarts((prev) =>
+      prev.map((cart) => (cart.id === cartId && cart.quantity > 1 ? { ...cart, quantity: cart.quantity - 1 } : cart)),
+    );
+  };
+
+  const handleIncrease = (cartId: number) => {
+    setLocalCarts((prev) => prev.map((cart) => (cart.id === cartId ? { ...cart, quantity: cart.quantity + 1 } : cart)));
+  };
+
+  const handleDeleteItemCartById = async (id: number) => {
+    try {
+      const request = await deleteItemCartById(id);
       if (request) {
         fetchCarts();
       }
@@ -30,26 +41,30 @@ const Cart = () => {
     }
   };
 
-  const handleIncrease = async (cart: Cart) => {
+  const handleDeleteAllItemCarts = async () => {
     try {
-      const productData = await getProductById(cart?.id);
-
-      const itemCart: ItemCart = {
-        productId: cart?.id,
-        quantity: cart?.quantity + 1,
-      };
-
-      // Kiểm tra nếu sản phẩm đã có trong giỏ hàng
-      const cartItem = carts.find((cart) => cart?.id === productData?.id);
-
-      if (cartItem && itemCart.quantity > productData?.stock) {
-        alert('Sản phẩm không thể tăng thêm vì vượt quá số lượng hiện có');
-      } else {
-        const request = await updateItemCartById(itemCart);
-        if (request) {
-          fetchCarts();
-        }
+      const request = await deleteAllItemCart();
+      if (request) {
+        fetchCarts();
       }
+    } catch (error: any) {
+      console.error(error.message);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, cardId: number) => {
+    const value = parseInt(e.target.value, 10) || 1;
+    setLocalCarts((prev) => prev.map((cart) => (cart?.id === cardId ? { ...cart, quantity: value } : cart)));
+  };
+
+  // Xử lý thanh toán
+  const handleCheckout = async () => {
+    try {
+      const updatePromises = localCarts.map((cart) =>
+        updateItemCartById({ productId: cart.id, quantity: cart.quantity }),
+      );
+      await Promise.all(updatePromises);
+      router.push('/checkout-cart');
     } catch (error: any) {
       console.error(error.message);
     }
@@ -61,9 +76,14 @@ const Cart = () => {
       <div className="mt-8 flex flex-col lg:flex-row gap-6">
         {/* Danh sách giỏ hàng */}
         <div className="flex-1 h-max space-y-3 rounded-lg border bg-white px-2 py-4 sm:px-6">
-          {carts.length ? (
+          <div className="">
+            <button className="text-lama cursor-pointer" onClick={handleDeleteAllItemCarts}>
+              Xóa tất cả
+            </button>
+          </div>
+          {localCarts.length ? (
             <div className="divide-y">
-              {carts.map((cart) => (
+              {localCarts.map((cart) => (
                 <div key={cart?.id} className="flex flex-col rounded-lg bg-white sm:flex-row">
                   <Image
                     width={72}
@@ -74,50 +94,66 @@ const Cart = () => {
                   />
                   <div className="flex w-full flex-col px-4 py-4">
                     <span className="font-semibold">{cart?.name}</span>
-                    <span className="text-md text-gray-400">
-                      {numericToMoney(cart?.price!)} / số lượng: {cart?.quantity}
-                    </span>
+                    <span className="text-md text-gray-400">{numericToMoney(cart?.price!)}</span>
                     <p className="text-md">{numericToMoney(cart?.price! * cart?.quantity)}</p>
                   </div>
 
-                  <div className="flex items-center gap-1">
-                    <button onClick={() => handleDecrease(cart)}>
-                      <span className="text-gray-500">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={1.5}
-                          stroke="currentColor"
-                          className="size-8"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                          />
-                        </svg>
-                      </span>
-                    </button>
+                  <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-1">
+                      <input
+                        type="number"
+                        value={cart.quantity}
+                        onChange={(e) => handleInputChange(e, cart.id)}
+                        className="w-12 text-center border border-gray-300 rounded-md focus:ring-1 focus:ring-lama focus:outline-none"
+                      />
 
-                    <button onClick={() => handleIncrease(cart)}>
-                      <span className="text-gray-500">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={1.5}
-                          stroke="currentColor"
-                          className="size-8"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                          />
-                        </svg>
-                      </span>
-                    </button>
+                      <button onClick={() => handleDecrease(cart?.id)}>
+                        <span className="text-gray-500">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="size-8"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                            />
+                          </svg>
+                        </span>
+                      </button>
+
+                      <button onClick={() => handleIncrease(cart?.id)}>
+                        <span className="text-gray-500">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="size-8"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                            />
+                          </svg>
+                        </span>
+                      </button>
+                    </div>
+
+                    <div className="">
+                      <button
+                        className="text-lama cursor-pointer px-4 py-2 ring-1 ring-lama hover:bg-lama hover:text-white"
+                        onClick={() => handleDeleteItemCartById(cart?.id)}
+                      >
+                        Xóa
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -166,7 +202,7 @@ const Cart = () => {
               <div className="flex justify-between items-center mb-2">
                 <span className="text-base">Tổng tiền:</span>
                 <span className="text-lg font-bold text-black">
-                  {numericToMoney(carts.reduce((total, cart) => total + cart.price * cart.quantity, 0))}
+                  {numericToMoney(localCarts.reduce((total, cart) => total + cart.price * cart.quantity, 0))}
                 </span>
               </div>
               <p className="text-sm text-gray-500 mb-4">Bạn có thể nhập mã giảm giá ở trang thanh toán.</p>
@@ -174,7 +210,7 @@ const Cart = () => {
 
             <div className="">
               <button
-                onClick={() => router.push('/checkout-cart')}
+                onClick={handleCheckout}
                 className="w-full py-2 bg-black text-white font-semibold hover:bg-slate-800 transition"
               >
                 Thanh toán
