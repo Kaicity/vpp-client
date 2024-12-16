@@ -9,6 +9,7 @@ import CartNull from 'public/cart_null.webp';
 import type { Cart } from '@/types/cart';
 import { deleteAllItemCart, deleteItemCartById, updateItemCartById } from '@/api/cart';
 import { useEffect, useState } from 'react';
+import { getProductById } from '@/api/product';
 
 const Cart = () => {
   const { carts, fetchCarts } = useApp();
@@ -26,7 +27,7 @@ const Cart = () => {
     );
   };
 
-  const handleIncrease = (cartId: number) => {
+  const handleIncrease = async (cartId: number) => {
     setLocalCarts((prev) => prev.map((cart) => (cart.id === cartId ? { ...cart, quantity: cart.quantity + 1 } : cart)));
   };
 
@@ -57,16 +58,36 @@ const Cart = () => {
     setLocalCarts((prev) => prev.map((cart) => (cart?.id === cardId ? { ...cart, quantity: value } : cart)));
   };
 
-  // Xử lý thanh toán
   const handleCheckout = async () => {
     try {
-      const updatePromises = localCarts.map((cart) =>
+      // Kiểm tra tồn kho cho từng sản phẩm trong giỏ hàng
+      const stockChecks = await Promise.all(
+        localCarts.map(async (cart) => {
+          const productData = await getProductById(cart.id);
+          return {
+            ...cart,
+            stock: productData.stock,
+          };
+        }),
+      );
+
+      // Kiểm tra có sản phẩm nào vượt stock
+      const invalidItems = stockChecks.filter((item) => item.quantity > item.stock);
+
+      if (invalidItems.length > 0) {
+        const errorMessage = invalidItems.map((item) => `${item.name}: chỉ còn ${item.stock} trong kho.`).join('\n');
+        alert(`Không thể thanh toán. Các sản phẩm sau vượt tồn kho:\n${errorMessage}`);
+        return; // Dừng quá trình thanh toán
+      }
+
+      const updatePromises = stockChecks.map((cart) =>
         updateItemCartById({ productId: cart.id, quantity: cart.quantity }),
       );
       await Promise.all(updatePromises);
       router.push('/checkout-cart');
     } catch (error: any) {
-      console.error(error.message);
+      console.error('Lỗi khi thanh toán:', error.message);
+      alert('Đã xảy ra lỗi khi xử lý thanh toán.');
     }
   };
 
@@ -100,13 +121,6 @@ const Cart = () => {
 
                   <div className="flex items-center gap-6">
                     <div className="flex items-center gap-1">
-                      <input
-                        type="number"
-                        value={cart.quantity}
-                        onChange={(e) => handleInputChange(e, cart.id)}
-                        className="w-12 text-center border border-gray-300 rounded-md focus:ring-1 focus:ring-lama focus:outline-none"
-                      />
-
                       <button onClick={() => handleDecrease(cart?.id)}>
                         <span className="text-gray-500">
                           <svg
@@ -125,6 +139,13 @@ const Cart = () => {
                           </svg>
                         </span>
                       </button>
+
+                      <input
+                        inputMode="numeric"
+                        value={cart.quantity}
+                        onChange={(e) => handleInputChange(e, cart.id)}
+                        className="w-12 text-center border border-gray-300 rounded-md focus:ring-1 focus:ring-lama focus:outline-none no-spinner"
+                      />
 
                       <button onClick={() => handleIncrease(cart?.id)}>
                         <span className="text-gray-500">

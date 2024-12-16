@@ -8,7 +8,7 @@ interface CatalogProps {
 
 const CategoryList: React.FC<CatalogProps> = ({ catalogs }) => {
   return (
-    <div className="px-8 md:px-16 lg:px-32">
+    <div className="">
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
         {catalogs.map((catalog) => (
           <Link key={catalog.id} href={`/list`} className="flex flex-col items-center text-center">
@@ -18,7 +18,6 @@ const CategoryList: React.FC<CatalogProps> = ({ catalogs }) => {
                 alt={catalog?.name || 'Category'}
                 layout="fill"
                 objectFit="cover"
-                className="rounded-md"
               />
             </div>
             <h1 className="mt-4 font-light text-sm sm:text-base tracking-wide">{catalog?.name}</h1>

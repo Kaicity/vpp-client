@@ -112,8 +112,8 @@ const HomePage = () => {
           Xem thêm
         </button>
       </div>
-      <div className="mt-12">
-        <h1 className="text-2xl px-4 md:px-8 lg:px-6 xl:32 2xl:px-32 mb-12">Loại sản phẩm</h1>
+      <div className="mt-12 px-4 md:px-8 lg:px-6 xl:32 2xl:px-32">
+        <h1 className="text-2xl mb-12">Loại sản phẩm</h1>
         <CategoryList catalogs={catalogs} />
       </div>
       <div className="mt-24 px-4 md:px-8 lg:px-6 xl:32 2xl:px-32">
