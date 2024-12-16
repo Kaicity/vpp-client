@@ -49,7 +49,7 @@ const NavIcons = () => {
         router.push('/list');
       }
     } catch (error: any) {
-      throw new Error(error.message);
+      console.error(error.message);
     }
   };
 
@@ -60,7 +60,7 @@ const NavIcons = () => {
         fetchCarts();
       }
     } catch (error: any) {
-      throw new Error(error.message);
+      console.error(error.message);
     }
   };
 
