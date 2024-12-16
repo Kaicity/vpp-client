@@ -243,9 +243,10 @@ const Order = () => {
 
                     <div className="w-full grid sm:grid-cols-2 lg:flex lg:w-64 lg:items-center lg:justify-end gap-4">
                       <button
+                        disabled={order?.orderStatus === OrderStatus.Cancelled}
                         onClick={() => requestCancelOrder(order)}
                         type="button"
-                        className="w-full border border-red-700 px-3 py-2 text-center text-sm font-medium text-red-700 hover:bg-red-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-red-300 lg:w-auto"
+                        className="w-full border border-red-700 px-3 py-2 text-center text-sm font-medium text-red-700 hover:bg-red-700 hover:text-white focus:outline-none focus:ring-4 focus:ring-red-50 lg:w-auto disabled:bg-slate-300 disabled:cursor-not-allowed disabled:text-gray-500 disabled:border-slate-300"
                       >
                         Hủy đơn hàng
                       </button>

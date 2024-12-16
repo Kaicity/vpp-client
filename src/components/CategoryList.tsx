@@ -2,24 +2,26 @@ import Image from 'next/image';
 import Link from 'next/link';
 import ProductDefault from 'public/product_default.webp';
 
-interface catalogProps {
+interface CatalogProps {
   catalogs: Catalog[];
 }
 
-const CategoryList: React.FC<catalogProps> = ({ catalogs }) => {
+const CategoryList: React.FC<CatalogProps> = ({ catalogs }) => {
   return (
-    <div className="px-4">
-      <div className="flex gap-4 md:gap-8 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+    <div className="px-8 md:px-16 lg:px-32">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
         {catalogs.map((catalog) => (
-          <Link
-            key={catalog.id}
-            href={`/list`}
-            className="flex-shrink-0 w-64 sm:w-1/2 lg:w-1/4 xl:w-1/6"
-          >
-            <div className="relative bg-slate-100 w-full h-96">
-              <Image src={catalog?.imageUrl || ProductDefault} alt="" fill sizes="20vw" className="object-cover" />
+          <Link key={catalog.id} href={`/list`} className="flex flex-col items-center text-center">
+            <div className="relative w-20 h-20 sm:w-28 sm:h-28">
+              <Image
+                src={catalog?.imageUrl || ProductDefault}
+                alt={catalog?.name || 'Category'}
+                layout="fill"
+                objectFit="cover"
+                className="rounded-md"
+              />
             </div>
-            <h1 className="mt-8 font-light text-xl tracking-wide">{catalog?.name}</h1>
+            <h1 className="mt-4 font-light text-sm sm:text-base tracking-wide">{catalog?.name}</h1>
           </Link>
         ))}
       </div>
