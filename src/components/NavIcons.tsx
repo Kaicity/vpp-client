@@ -9,9 +9,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import CartModal from './CartModal';
 import { useApp } from '@/context/AppContext';
-import { deleteAllItemCart, deleteItemCartById, updateItemCartById } from '@/api/cart';
-import type { Cart, ItemCart } from '@/types/cart';
-import type { Product } from '@/types/product';
+import { deleteAllItemCart, deleteItemCartById } from '@/api/cart';
 
 const NavIcons = () => {
   const { isLoggedIn, handleLogout, isCartOpen, toggleCart, closeCart, user, fetchCarts, carts } = useApp();

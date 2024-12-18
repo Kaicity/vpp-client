@@ -33,7 +33,9 @@ const CheckoutCartPage = () => {
     fetchCarts();
     // Chỉ kiểm tra khi carts đã được khởi tạo
     if (carts && carts.length === 0) {
-      router.push('/');
+      if (!message) {
+        router.push('/');
+      }
     }
   }, [carts, router]);
 
