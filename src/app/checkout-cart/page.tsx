@@ -16,7 +16,7 @@ import Cash from 'public/cash.png';
 import { CheckCircleIcon } from '@heroicons/react/24/outline';
 
 const CheckoutCartPage = () => {
-  const { carts, fetchCarts, user } = useApp();
+  const { carts, user } = useApp();
   const router = useRouter();
 
   // ORDER
@@ -30,7 +30,6 @@ const CheckoutCartPage = () => {
   const [message, setMessage] = useState(false);
 
   useEffect(() => {
-    fetchCarts();
     // Chỉ kiểm tra khi carts đã được khởi tạo
     if (carts && carts.length === 0) {
       if (!message) {
